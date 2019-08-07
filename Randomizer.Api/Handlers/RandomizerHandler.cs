@@ -1,4 +1,6 @@
 ﻿using System.Diagnostics;
+using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Randomizer.Api.Configuration;
@@ -37,11 +39,30 @@ namespace Randomizer.Api.Handlers
 
                 var err = await process.StandardError.ReadToEndAsync();
                 if (err.Length > 0)
-                    return new RandomizerRomCreationDetails { Success = false };
+                    return new RandomizerRomCreationDetails { Success = false, Error = err };
             }
 
             var path = $"{uploadedFileDetails.Directory}\\{randomizedFilename}.sfc";
             return new RandomizerRomCreationDetails { Success = true, RomPath = path};
+        }
+
+        public async Task<MemoryStream> GetFileStreamAndDeleteRandomizedRomAsync(UploadedFileDetails uploadedFileDetails, string romPath)
+        {
+            var ms = new MemoryStream();
+            using (var stream = new FileStream(romPath, FileMode.Open, FileAccess.Read))
+                await stream.CopyToAsync(ms);
+
+            File.Delete(uploadedFileDetails.FullPath);
+            File.Delete(romPath);
+
+            return ms;
+        }
+
+        public FileInfo GetSpoilerLog(long seed)
+        {
+            var directoryInfo = new DirectoryInfo(_randomizerConfiguration.TempStorageDestination);
+            var files = directoryInfo.GetFiles($"*{seed}*");
+            return !files.Any() ? null : files.First();
         }
 
         private string BuildPythonString(string version, long seed, long offset, string path, string filename, SeedParameters parameters)

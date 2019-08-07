@@ -4,6 +4,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Randomizer.Api.Configuration;
 using Randomizer.Api.Models;
 
 namespace Randomizer.Api.Extensions
@@ -40,16 +41,12 @@ namespace Randomizer.Api.Extensions
         /// <param name="rom"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public static async Task<UploadedFileDetails> CopyFileToTempStorageAsync(this IFormFile rom, CancellationToken cancellationToken)
+        public static async Task<UploadedFileDetails> CopyFileToTempStorageAsync(this IFormFile rom, RandomizerConfiguration configuration, CancellationToken cancellationToken)
         {
-            var directory = $@"{Path.GetTempPath()}\IOGR";
-            if (!Directory.Exists(directory))
-                Directory.CreateDirectory(directory);
-            
             var name = DateTime.UtcNow.Ticks.ToString();
             var extension = Path.GetExtension(rom.FileName);
 
-            var romPath = $@"{directory}\\{name}{extension}";
+            var romPath = $@"{configuration.TempStorageDestination}\\{name}{extension}";
 
             using (var file = new FileStream(romPath, FileMode.Create))
             {
@@ -59,7 +56,7 @@ namespace Randomizer.Api.Extensions
 
             return new UploadedFileDetails
             {
-                Directory = directory,
+                Directory = configuration.TempStorageDestination,
                 FileName = name,
                 Extension = extension,
                 FullPath = romPath

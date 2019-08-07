@@ -19,30 +19,33 @@ namespace Randomizer.Api
 {
     public class Startup
     {
+        private readonly IConfiguration _configuration;
+
         public Startup(IConfiguration configuration)
         {
-            Configuration = configuration;
+            _configuration = configuration;
         }
 
-        public IConfiguration Configuration { get; }
-
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             var randomizerConfiguration = new RandomizerConfiguration();
             
-            Configuration.GetSection("Randomizer").Bind(randomizerConfiguration);
+            _configuration.GetSection("Randomizer").Bind(randomizerConfiguration);
 
             services
                 .AddTransient<RandomizerConfiguration>(x => randomizerConfiguration)
                 .AddTransient<RandomizerHandler>()
                 .AddCors(options=> options.AddPolicy("AllowAll", p => 
-                    p.AllowAnyOrigin()
+                    p
+                        .AllowAnyOrigin()
                         .AllowAnyHeader()
                         .AllowAnyMethod()
-                        .AllowCredentials().WithExposedHeaders("Content-Disposition")))
+                        .AllowCredentials()
+                        .WithExposedHeaders("Content-Disposition")))
+                .AddMvc()
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
-                .AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.Configure<IISOptions>(options => options.ForwardClientCertificate = false);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
