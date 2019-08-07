@@ -19,7 +19,8 @@ const SeedGenerator = observer(class SeedGenerator extends React.Component {
         this.handleSubmit = this.handleSubmit.bind(this)
         this.handleDownloadRom = this.handleDownloadRom.bind(this)
         this.handleDownloadSpoiler = this.handleDownloadSpoiler.bind(this)
-
+        this.handleRandomizeSeed = this.handleRandomizeSeed.bind(this)
+        
         this.generateSeed = this.generateSeed.bind(this)
         this.requestSeed = this.requestSeed.bind(this)
         this.requestSpoiler = this.requestSpoiler.bind(this)
