@@ -25,7 +25,7 @@ export default class SeedGenerator extends React.Component {
     }
 
     async upload(fileToUpload) {
-        seedGeneratorStore.setProcessing(true)
+        seedGeneratorStore.setProcessing()
 
         let formData = this.buildFormData(fileToUpload)
 
@@ -37,8 +37,8 @@ export default class SeedGenerator extends React.Component {
 
             const { name, file } = await this.parseResponse(response)
     
-            seedGeneratorStore.setProcessing(false)
-            seedGeneratorStore.setError(false)
+            seedGeneratorStore.clearProcessing()
+            seedGeneratorStore.clearError()
 
             this.setState({
                 showDownload: true,
@@ -47,8 +47,8 @@ export default class SeedGenerator extends React.Component {
             })  
         }
         catch(error) { 
-            seedGeneratorStore.setProcessing(false)
-            seedGeneratorStore.setError(false)
+            seedGeneratorStore.clearProcessing()
+            seedGeneratorStore.clearError()
             console.log(error) 
         }
     }
@@ -57,12 +57,12 @@ export default class SeedGenerator extends React.Component {
         event.preventDefault()
                 
         if (this.fileInput.current.files.length === 0) {            
-            seedGeneratorStore.setError(true)
+            seedGeneratorStore.setError('Hey, man. You need to upload a ROM file.')
             return
         }
           
         const file = this.fileInput.current.files[0]
-            
+    
         this.upload(file)
     }
     

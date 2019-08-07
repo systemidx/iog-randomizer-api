@@ -4,19 +4,29 @@ import {  observable, action, decorate } from 'mobx'
 class SeedGeneratorStore {
     isProcessing = false
     isError = false    
+    errorText = null
     difficulty = 'normal'
     goal = 'Dark Gaia'
     variant = 'None'
     firebird = false
     seed = 0
 
-    setError = action('setError', (val) => {
-        this.isError = val
+    setError = action('setError', (text) => {
+        this.isError = true
+        this.errorText = text
     })
 
-    setProcessing = action('setProcessing', (val) => {
-        this.isProcessing = val
+    clearError = action('clearError', () => {
+        this.isError = false
+    })
+
+    setProcessing = action('setProcessing', () => {
+        this.isProcessing = true
     })    
+
+    clearProcessing = action('clearProcessing', () => {
+        this.isProcessing = false
+    })
 
     setSeed = action('setSeed', (seed) => {
         this.seed = seed
@@ -42,6 +52,7 @@ class SeedGeneratorStore {
 decorate(SeedGeneratorStore, {
     isProcessing: observable,
     isError: observable,
+    errorText: observable,
     seed: observable,
     difficulty: observable,
     goal: observable,

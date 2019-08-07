@@ -15,28 +15,20 @@ import SeedOptions from './components/seed-options';
 
 const App = observer(
   class App extends React.Component {
-    state = {
-      isProcessing: false,
-      isError: false,
-      
-    }
 
     constructor(props) {
       super(props)
 
-      
       this.clearError = this.clearError.bind(this)    
-    }
-
-    
+    }  
 
     clearError() {
-      seedGeneratorStore.setError(false)
+      seedGeneratorStore.clearError()
     }
 
 
     render() {
-      const { isError, isProcessing } = seedGeneratorStore
+      const { isError, errorText, isProcessing } = seedGeneratorStore
 
       return (      
         <Fragment>
@@ -50,17 +42,15 @@ const App = observer(
           { isError && (
             <Modal open={isError} toggle={this.clearError}>
               <ModalHeader>Whoops</ModalHeader>
-              <ModalBody><FaBomb color="red" style={{ verticalAlign: 'center' }} /> Hey, man. You need to upload a ROM file.</ModalBody>
+              <ModalBody><FaBomb color="red" style={{ verticalAlign: 'center' }} /> {errorText}</ModalBody>
             </Modal>
           )}
           { isProcessing && (
             <Modal open={isProcessing} toggle={() => {}}>
-            <ModalHeader>Generating Seed</ModalHeader>
-            <ModalBody>
-              <div style={{flex: 1, justifyContent: 'center', alignContent: 'center'}}>
-                <ClipLoader sizeUnit={"px"} size={150} color={'#123abc'} loading={true} />
-                <span>Loading...</span>
-              </div>
+              <ModalHeader>Generating Seed</ModalHeader>
+              <ModalBody style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
+                  <ClipLoader sizeUnit={"px"} size={150} color={'#123abc'} loading={true} />
+                  <span>Loading...</span>
               </ModalBody>
           </Modal>
           )}
