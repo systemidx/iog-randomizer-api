@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
@@ -9,19 +10,28 @@ namespace Randomizer.Api.Extensions
 {
     public static class FormFileExtensions
     {
-        
-        public static async Task<bool> IsValidRomFileAsync(this IFormFile rom)
+        /// <summary>
+        /// Returns whether or not the meets the criteria for validity.
+        /// </summary>
+        /// <param name="rom"></param>
+        /// <returns></returns>
+        public static bool IsValidRomFile(this IFormFile rom)
         {
-            using (var reader = new StreamReader(rom.OpenReadStream()))
+            const string HEADER = "\x49\x4C\x4C\x55\x53\x49\x4F\x4E\x20\x4F\x46\x20\x47\x41\x49\x41\x20\x55\x53\x41";
+            
+            using (var reader = new BinaryReader(rom.OpenReadStream()))
             {
-                const string HEADER = "\x49\x4C\x4C\x55\x53\x49\x4F\x4E\x20\x4F\x46\x20\x47\x41\x49\x41\x20\x55\x53\x41";
-                var data = await reader.ReadToEndAsync();
+                try
+                {
+                    reader.BaseStream.Seek(0x00FFC0, SeekOrigin.Begin);
+                    var bytes = reader.ReadBytes(20);
+                    var data = Encoding.UTF8.GetString(bytes);
 
-                if (data.IndexOf(HEADER, StringComparison.Ordinal) == -1)
-                    return false;
+                    return string.Equals(data, HEADER, StringComparison.OrdinalIgnoreCase);
+                }
+                catch (IOException) { return false; }
+                catch (ArgumentOutOfRangeException) { return false; }
             }
-
-            return true;
         }
 
         /// <summary>

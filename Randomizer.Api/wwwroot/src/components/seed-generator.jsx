@@ -120,6 +120,7 @@ export default class SeedGenerator extends React.Component {
         formData.append('difficulty', seedGeneratorStore.difficulty)
         formData.append('goal', seedGeneratorStore.goal)
         formData.append('variant', seedGeneratorStore.variant)
+        formData.append('mode', seedGeneratorStore.mode)
         formData.append('firebird', seedGeneratorStore.firebird)
 
         return formData

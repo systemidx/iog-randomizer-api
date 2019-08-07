@@ -40,6 +40,9 @@ namespace Randomizer.Api.Extensions
             if (request.Form.ContainsKey("variant"))
                 parameters.Variations = request.Form["variant"];
 
+            if (request.Form.ContainsKey("mode"))
+                parameters.Mode = request.Form["mode"];
+
             if (request.Form.ContainsKey("firebird") && bool.TryParse(request.Form["firebird"], out var firebird)) 
                 parameters.Firebird = firebird;
             else

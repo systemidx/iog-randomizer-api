@@ -24,7 +24,6 @@ namespace Randomizer.Api.Handlers
             using (var process = new Process())
             {
                 var cmd = BuildPythonString(version, seed, offset, uploadedFileDetails.FullPath, randomizedFilename, parameters);
-                    //$"import iogr_rom;iogr_rom.generate_rom('{version}',{offset},{seed},'{uploadedFileDetails.FullPath}','{randomizedFilename}')";
                 
                 process.StartInfo = new ProcessStartInfo("python")
                 {
@@ -58,7 +57,7 @@ namespace Randomizer.Api.Handlers
             builder.Append($",'{filename}'");
             builder.Append($",'{parameters.Difficulty}'");
             builder.Append($",'{parameters.Goal}'");
-            builder.Append($",'Completable'");
+            builder.Append($",'{parameters.Mode}'");
             builder.Append($",'4'");
             builder.Append($",'{parameters.Variations}'");
             builder.Append($",{firebird})");

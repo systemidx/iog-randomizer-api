@@ -29,7 +29,7 @@ namespace Randomizer.Api.Controllers
             var seed = Request.GetSeedFromRequestOrDefault();
             var parameters = Request.GetParametersFromRequestOrDefault();
 
-            var validHeader = await rom.IsValidRomFileAsync();
+            var validHeader = rom.IsValidRomFile();
             if (!validHeader)
                 return BadRequest("ROM file must be the US version of Illusion of Gaia");
             

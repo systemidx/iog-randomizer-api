@@ -8,6 +8,7 @@ class SeedGeneratorStore {
     difficulty = 'normal'
     goal = 'Dark Gaia'
     variant = 'None'
+    mode = 'Completable'
     firebird = false
     seed = 0
 
@@ -44,6 +45,10 @@ class SeedGeneratorStore {
         this.variant = variant
     })
 
+    setMode = action('setMode', (mode) => {
+        this.mode = mode
+    })
+
     setFirebird = action('setFirebird', (firebird) => {
         this.firebird = firebird
     })
@@ -56,6 +61,7 @@ decorate(SeedGeneratorStore, {
     seed: observable,
     difficulty: observable,
     goal: observable,
+    mode: observable,
     variant: observable,
     firebird: observable
 })
