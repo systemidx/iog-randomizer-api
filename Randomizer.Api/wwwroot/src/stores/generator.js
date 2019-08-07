@@ -5,7 +5,7 @@ class SeedGeneratorStore {
     isProcessing = false
     isError = false    
     errorText = null
-    difficulty = 'normal'
+    difficulty = 'Normal'
     goal = 'Dark Gaia'
     variant = 'None'
     mode = 'Completable'
