@@ -22,10 +22,10 @@ const SeedDifficulty = observer(
                     <Card>                    
                         <CardBody>
                             <CardTitle>Difficulty</CardTitle>
-                            <FormRadio inline name="easy" checked={seedGeneratorStore.difficulty === "easy"} onChange={() => { this.changeDifficulty('easy')}}>Easy</FormRadio>
-                            <FormRadio inline name="normal" checked={seedGeneratorStore.difficulty === "normal"} onChange={() => { this.changeDifficulty('normal')}}>Normal</FormRadio>
-                            <FormRadio inline name="hard" checked={seedGeneratorStore.difficulty === "hard"} onChange={() => { this.changeDifficulty('hard')}}>Hard</FormRadio>
-                            <FormRadio inline name="extreme" checked={seedGeneratorStore.difficulty === "extreme"} onChange={() => { this.changeDifficulty('extreme')}}>Extreme</FormRadio>
+                            <FormRadio inline name="Easy" checked={seedGeneratorStore.difficulty === "Easy"} onChange={() => { this.changeDifficulty('Easy')}}>Easy</FormRadio>
+                            <FormRadio inline name="Normal" checked={seedGeneratorStore.difficulty === "Normal"} onChange={() => { this.changeDifficulty('Normal')}}>Normal</FormRadio>
+                            <FormRadio inline name="Hard" checked={seedGeneratorStore.difficulty === "Hard"} onChange={() => { this.changeDifficulty('Hard')}}>Hard</FormRadio>
+                            <FormRadio inline name="Extreme" checked={seedGeneratorStore.difficulty === "Extreme"} onChange={() => { this.changeDifficulty('Extreme')}}>Extreme</FormRadio>
                         </CardBody>
                     </Card>                            
                 </Container>
