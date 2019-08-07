@@ -34,7 +34,7 @@ const SeedGoal = observer(
                             { seedGeneratorStore.goal === 'Dark Gaia' && (
                                 <FormGroup style={{ display: 'flex', flexDirection: 'row', alignContent: 'center', alignItems: 'center', justifyContent: 'space-between'}}>
                                     <label>Number of Statues (0 - 6): <FormInput disabled={seedGeneratorStore.statuesRandom} defaultValue={seedGeneratorStore.statues} onChange={ (v) => seedGeneratorStore.setStatues(v.target.value) } /></label>
-                                    <FormCheckbox inline onChange={this.setStatuesRandom}>Random</FormCheckbox>
+                                    <FormCheckbox inline checked={seedGeneratorStore.statuesRandom === true} onChange={this.setStatuesRandom}>Random</FormCheckbox>
                                 </FormGroup>
                             )}                            
                         </CardBody>
