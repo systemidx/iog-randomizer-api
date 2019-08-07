@@ -31,10 +31,12 @@ const SeedGoal = observer(
                                 <FormRadio inline name="Red Jewel Hunt" checked={seedGeneratorStore.goal === "Red Jewel Hunt"} onChange={() => { this.setGoal('Red Jewel Hunt')}}>Red Jewel Hunt</FormRadio>
                                 <FormRadio inline name="Random" checked={seedGeneratorStore.goal === "Random"} onChange={() => { this.setGoal('Random')}}>Random</FormRadio>
                             </FormGroup>
-                            <FormGroup style={{ display: 'flex', flexDirection: 'row', alignContent: 'center', alignItems: 'center', justifyContent: 'space-between'}}>
-                                <label>Number of Statues (0 - 6): <FormInput disabled={seedGeneratorStore.statuesRandom} defaultValue={seedGeneratorStore.statues} onChange={ (v) => seedGeneratorStore.setStatues(v.target.value) } /></label>
-                                <FormCheckbox inline onChange={this.setStatuesRandom}>Random</FormCheckbox>
-                            </FormGroup>
+                            { seedGeneratorStore.goal === 'Dark Gaia' && (
+                                <FormGroup style={{ display: 'flex', flexDirection: 'row', alignContent: 'center', alignItems: 'center', justifyContent: 'space-between'}}>
+                                    <label>Number of Statues (0 - 6): <FormInput disabled={seedGeneratorStore.statuesRandom} defaultValue={seedGeneratorStore.statues} onChange={ (v) => seedGeneratorStore.setStatues(v.target.value) } /></label>
+                                    <FormCheckbox inline onChange={this.setStatuesRandom}>Random</FormCheckbox>
+                                </FormGroup>
+                            )}                            
                         </CardBody>
                     </Card>                            
                 </Container>
