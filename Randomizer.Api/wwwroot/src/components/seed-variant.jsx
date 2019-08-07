@@ -1,6 +1,6 @@
 import React from 'react'
 import { observer } from 'mobx-react'
-import { Card, CardBody, CardTitle, Container, FormRadio, FormCheckbox, FormGroup } from 'shards-react'
+import { Card, CardBody, CardTitle, Container, FormRadio, FormGroup } from 'shards-react'
 
 import seedGeneratorStore from '../stores/generator'
 

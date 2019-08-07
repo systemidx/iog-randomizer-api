@@ -11,6 +11,8 @@ class SeedGeneratorStore {
     mode = 'Completable'
     firebird = false
     seed = 0
+    statues = 4
+    statuesRandom = false
 
     setError = action('setError', (text) => {
         this.isError = true
@@ -52,6 +54,14 @@ class SeedGeneratorStore {
     setFirebird = action('setFirebird', (firebird) => {
         this.firebird = firebird
     })
+
+    setStatues = action('setStatues', (statues) => {
+        this.statues = statues
+    })
+
+    toggleStatuesRandom = action('setStatuesRandom', () => {
+        this.statuesRandom = !this.statuesRandom
+    })
 }
 
 decorate(SeedGeneratorStore, {
@@ -63,7 +73,9 @@ decorate(SeedGeneratorStore, {
     goal: observable,
     mode: observable,
     variant: observable,
-    firebird: observable
+    firebird: observable,
+    statuesRandom: observable,
+    statues: observable
 })
 
 const seedGeneratorStore = new SeedGeneratorStore()

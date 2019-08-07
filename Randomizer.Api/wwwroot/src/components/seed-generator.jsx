@@ -82,6 +82,10 @@ const SeedGenerator = observer(class SeedGenerator extends React.Component {
         })
     }
 
+    /*================================
+        Button Handlers
+    ================================*/
+
     handleSubmit(event) {
         event.preventDefault()
                 
@@ -95,6 +99,14 @@ const SeedGenerator = observer(class SeedGenerator extends React.Component {
             seedGeneratorStore.setError('Hey, man. You need to enter a valid non-negative integer for a seed!')
             return
         }
+
+        if (seedGeneratorStore.goal === 'Dark Gaia') {
+            if (isNaN(seedGeneratorStore.statues) || seedGeneratorStore.statues < 1 || seedGeneratorStore.statues > 6) {
+                console.log(seedGeneratorStore.statues)
+                seedGeneratorStore.setError('Hey, man. You need to enter a valid non-negative integer (between 1 and 6) for a statue count!')
+                return
+            }
+        }
           
         const file = this.fileInput.current.files[0]
     
@@ -103,7 +115,7 @@ const SeedGenerator = observer(class SeedGenerator extends React.Component {
     
     handleDownloadRom() {
         const { romUri, romName } = this.state
-    
+        
         var a = document.createElement('a')
             document.body.appendChild(a)
             a.style = 'display: none'
@@ -129,7 +141,7 @@ const SeedGenerator = observer(class SeedGenerator extends React.Component {
         const max = 2147483648
         const min = 0
 
-        const seed = Math.floor(Math.random() * (max - min + 1)) + min;
+        const seed = this.getRandomInRange(min, max)
         seedGeneratorStore.setSeed(seed)
     }
 
@@ -175,6 +187,17 @@ const SeedGenerator = observer(class SeedGenerator extends React.Component {
         formData.append('variant', seedGeneratorStore.variant)
         formData.append('mode', seedGeneratorStore.mode)
         formData.append('firebird', seedGeneratorStore.firebird)
+        
+        if (seedGeneratorStore.goal === 'Dark Gaia') {
+            let statues = seedGeneratorStore.statues
+
+            if (seedGeneratorStore.statuesRandom) {
+                statues = this.getRandomInRange(0, 6)
+                console.log('Generating random statue count', statues)
+            }
+
+            formData.append('statues', statues)
+        }           
 
         return formData
     }
@@ -187,11 +210,15 @@ const SeedGenerator = observer(class SeedGenerator extends React.Component {
         for (let i = 0; i < d.length; ++i) {
             const idx = d[i].indexOf(key)
 
-            if (idx > -1) 
-                return d[i].substring(idx + key.length + 1) 
+            if (idx > -1)                                
+                return d[i].substring(idx + key.length + 1)             
         }
         
         return null
+    }
+
+    getRandomInRange(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min
     }
 })
 

@@ -7,5 +7,6 @@
         public string Variations { get; set; } = "None";
         public bool Firebird { get; set;  } = false;
         public string Mode { get; set; } = "Completable";
+        public string Statues { get; set; } = "4";
     }
 }

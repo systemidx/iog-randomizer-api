@@ -39,14 +39,15 @@ namespace Randomizer.Api.Extensions
         /// Returns the temporary storage location of the copied ROM file.
         /// </summary>
         /// <param name="rom"></param>
+        /// <param name="tempStorageDestination"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public static async Task<UploadedFileDetails> CopyFileToTempStorageAsync(this IFormFile rom, RandomizerConfiguration configuration, CancellationToken cancellationToken)
+        public static async Task<UploadedFileDetails> CopyFileToTempStorageAsync(this IFormFile rom, string tempStorageDestination, CancellationToken cancellationToken)
         {
             var name = DateTime.UtcNow.Ticks.ToString();
             var extension = Path.GetExtension(rom.FileName);
 
-            var romPath = $@"{configuration.TempStorageDestination}\\{name}{extension}";
+            var romPath = $@"{tempStorageDestination}\\{name}{extension}";
 
             using (var file = new FileStream(romPath, FileMode.Create))
             {
@@ -56,7 +57,7 @@ namespace Randomizer.Api.Extensions
 
             return new UploadedFileDetails
             {
-                Directory = configuration.TempStorageDestination,
+                Directory = tempStorageDestination,
                 FileName = name,
                 Extension = extension,
                 FullPath = romPath

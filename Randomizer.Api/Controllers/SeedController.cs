@@ -37,7 +37,7 @@ namespace Randomizer.Api.Controllers
             if (!validHeader)
                 return BadRequest("ROM file must be the US version of Illusion of Gaia");
             
-            var uploadedFileDetails = await rom.CopyFileToTempStorageAsync(_configuration, cancellationToken);
+            var uploadedFileDetails = await rom.CopyFileToTempStorageAsync(_configuration.TempStorageDestination, cancellationToken);
             var randomizedFileDetails = await _randomizer.CreateRandomizedRomAsync(seed, uploadedFileDetails, parameters);
             
             if (!randomizedFileDetails.Success)
@@ -54,7 +54,7 @@ namespace Randomizer.Api.Controllers
         }
 
         [HttpGet, Route("{seed}/spoiler")]
-        public async Task<IActionResult> DownloadSpoilerAsync(long seed, CancellationToken cancellationToken)
+        public IActionResult DownloadSpoiler(long seed)
         {
             var file = _randomizer.GetSpoilerLog(seed);
 

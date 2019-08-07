@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Randomizer.Api.Configuration;
+using Randomizer.Api.Extensions;
 using Randomizer.Api.Models;
 
 namespace Randomizer.Api.Handlers
@@ -20,7 +21,7 @@ namespace Randomizer.Api.Handlers
         public async Task<RandomizerRomCreationDetails> CreateRandomizedRomAsync(long seed, UploadedFileDetails uploadedFileDetails, SeedParameters parameters)
         {
             var version = _randomizerConfiguration.RandomizerVersion;
-            var randomizedFilename = $"IOGR_V{version}_{seed}";
+            var randomizedFilename = parameters.GenerateFilenameScheme(version, seed);
             var offset = 0;
 
             using (var process = new Process())
@@ -79,7 +80,7 @@ namespace Randomizer.Api.Handlers
             builder.Append($",'{parameters.Difficulty}'");
             builder.Append($",'{parameters.Goal}'");
             builder.Append($",'{parameters.Mode}'");
-            builder.Append($",'4'");
+            builder.Append($",'{parameters.Statues}'");
             builder.Append($",'{parameters.Variations}'");
             builder.Append($",{firebird})");
 
