@@ -1,7 +1,10 @@
 ﻿using System.Diagnostics;
+using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Randomizer.Api.Configuration;
+using Randomizer.Api.Extensions;
 using Randomizer.Api.Models;
 
 namespace Randomizer.Api.Handlers
@@ -18,7 +21,7 @@ namespace Randomizer.Api.Handlers
         public async Task<RandomizerRomCreationDetails> CreateRandomizedRomAsync(long seed, UploadedFileDetails uploadedFileDetails, SeedParameters parameters)
         {
             var version = _randomizerConfiguration.RandomizerVersion;
-            var randomizedFilename = $"IOGR_V{version}_{seed}";
+            var randomizedFilename = parameters.GenerateFilenameScheme(version, seed);
             var offset = 0;
 
             using (var process = new Process())
@@ -30,18 +33,43 @@ namespace Randomizer.Api.Handlers
                     Arguments = $"-c \"{cmd}\"",
                     WorkingDirectory = _randomizerConfiguration.PathToRandomizer,
                     RedirectStandardError = true,
+                    RedirectStandardOutput = true
                 };
 
                 process.Start();
                 process.WaitForExit();
 
                 var err = await process.StandardError.ReadToEndAsync();
+                var info = await process.StandardOutput.ReadToEndAsync();
+
                 if (err.Length > 0)
-                    return new RandomizerRomCreationDetails { Success = false };
+                    return new RandomizerRomCreationDetails { Success = false, Error = err };
+
+                if (info.Contains("ERROR"))
+                    return new RandomizerRomCreationDetails { Success = false, Error = info };
             }
 
             var path = $"{uploadedFileDetails.Directory}\\{randomizedFilename}.sfc";
             return new RandomizerRomCreationDetails { Success = true, RomPath = path};
+        }
+
+        public async Task<MemoryStream> GetFileStreamAndDeleteRandomizedRomAsync(UploadedFileDetails uploadedFileDetails, string romPath)
+        {
+            var ms = new MemoryStream();
+            using (var stream = new FileStream(romPath, FileMode.Open, FileAccess.Read))
+                await stream.CopyToAsync(ms);
+
+            File.Delete(uploadedFileDetails.FullPath);
+            File.Delete(romPath);
+
+            return ms;
+        }
+
+        public FileInfo GetSpoilerLog(long seed)
+        {
+            var directoryInfo = new DirectoryInfo(_randomizerConfiguration.TempStorageDestination);
+            var files = directoryInfo.GetFiles($"*{seed}*");
+            return !files.Any() ? null : files.First();
         }
 
         private string BuildPythonString(string version, long seed, long offset, string path, string filename, SeedParameters parameters)
@@ -58,7 +86,7 @@ namespace Randomizer.Api.Handlers
             builder.Append($",'{parameters.Difficulty}'");
             builder.Append($",'{parameters.Goal}'");
             builder.Append($",'{parameters.Mode}'");
-            builder.Append($",'4'");
+            builder.Append($",'{parameters.Statues}'");
             builder.Append($",'{parameters.Variations}'");
             builder.Append($",{firebird})");
 

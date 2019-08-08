@@ -1,17 +1,16 @@
 import React, { Fragment } from 'react';
 
 import { Container, Row, Col, Modal, ModalHeader, ModalBody } from "shards-react";
-
+import { observer } from 'mobx-react'
 import { FaBomb } from 'react-icons/fa'
-import ClipLoader from 'react-spinners/ClipLoader'
 
+import will from './assets/will.gif'
 
 import Navigation from './components/navigation'
 import SeedGenerator from './components/seed-generator'
+import SeedOptions from './components/seed-options'
 
-import { observer } from 'mobx-react'
 import seedGeneratorStore from './stores/generator'
-import SeedOptions from './components/seed-options';
 
 const App = observer(
   class App extends React.Component {
@@ -49,8 +48,8 @@ const App = observer(
             <Modal open={isProcessing} toggle={() => {}}>
               <ModalHeader>Generating Seed</ModalHeader>
               <ModalBody style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
-                  <ClipLoader sizeUnit={"px"} size={150} color={'#123abc'} loading={true} />
-                  <span>Loading...</span>
+                <img src={will} alt="Loading" />
+                <span>Loading...</span>
               </ModalBody>
           </Modal>
           )}

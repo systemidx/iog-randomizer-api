@@ -5,12 +5,13 @@ class SeedGeneratorStore {
     isProcessing = false
     isError = false    
     errorText = null
-    difficulty = 'normal'
+    difficulty = 'Normal'
     goal = 'Dark Gaia'
     variant = 'None'
     mode = 'Completable'
     firebird = false
     seed = 0
+    statues = 4
 
     setError = action('setError', (text) => {
         this.isError = true
@@ -52,6 +53,10 @@ class SeedGeneratorStore {
     setFirebird = action('setFirebird', (firebird) => {
         this.firebird = firebird
     })
+
+    setStatues = action('setStatues', (statues) => {
+        this.statues = statues
+    })
 }
 
 decorate(SeedGeneratorStore, {
@@ -63,7 +68,8 @@ decorate(SeedGeneratorStore, {
     goal: observable,
     mode: observable,
     variant: observable,
-    firebird: observable
+    firebird: observable,
+    statues: observable
 })
 
 const seedGeneratorStore = new SeedGeneratorStore()

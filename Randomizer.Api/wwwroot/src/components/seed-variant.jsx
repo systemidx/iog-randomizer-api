@@ -1,6 +1,6 @@
 import React from 'react'
 import { observer } from 'mobx-react'
-import { Card, CardBody, CardTitle, Container, FormRadio, FormCheckbox, FormGroup } from 'shards-react'
+import { Card, CardBody, CardTitle, Container, FormRadio, FormGroup } from 'shards-react'
 
 import seedGeneratorStore from '../stores/generator'
 
@@ -22,7 +22,7 @@ const SeedVariant = observer(
             seedGeneratorStore.setMode(mode)
         }
 
-        toggleFirebird(firebird) {
+        toggleFirebird() {
             seedGeneratorStore.setFirebird(!seedGeneratorStore.firebird)
         }
 
@@ -41,7 +41,7 @@ const SeedVariant = observer(
                                 <FormRadio inline name="Beatable" checked={seedGeneratorStore.mode === "Beatable"} onChange={() => { this.setMode('Beatable')}}>Beatable</FormRadio>
                                 <FormRadio inline name="Chaos" checked={seedGeneratorStore.mode === "Chaos"} onChange={() => { this.setMode('Chaos')}}>Chaos</FormRadio>
                             </FormGroup>
-                            <FormCheckbox checked={seedGeneratorStore.firebird === true} onChange={() => { this.toggleFirebird()}}>Firebird</FormCheckbox>                            
+                            {/* <FormCheckbox checked={seedGeneratorStore.firebird === true} onChange={() => { this.toggleFirebird()}}>Firebird</FormCheckbox>                             */}
                         </CardBody>
                     </Card>                            
                 </Container>
