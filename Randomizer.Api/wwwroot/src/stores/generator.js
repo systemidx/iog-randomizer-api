@@ -12,7 +12,6 @@ class SeedGeneratorStore {
     firebird = false
     seed = 0
     statues = 4
-    statuesRandom = false
 
     setError = action('setError', (text) => {
         this.isError = true
@@ -58,10 +57,6 @@ class SeedGeneratorStore {
     setStatues = action('setStatues', (statues) => {
         this.statues = statues
     })
-
-    toggleStatuesRandom = action('setStatuesRandom', () => {
-        this.statuesRandom = !this.statuesRandom
-    })
 }
 
 decorate(SeedGeneratorStore, {
@@ -74,7 +69,6 @@ decorate(SeedGeneratorStore, {
     mode: observable,
     variant: observable,
     firebird: observable,
-    statuesRandom: observable,
     statues: observable
 })
 

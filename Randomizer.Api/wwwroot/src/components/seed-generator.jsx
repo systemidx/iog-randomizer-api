@@ -20,7 +20,7 @@ const SeedGenerator = observer(class SeedGenerator extends React.Component {
         this.handleDownloadRom = this.handleDownloadRom.bind(this)
         this.handleDownloadSpoiler = this.handleDownloadSpoiler.bind(this)
         this.handleRandomizeSeed = this.handleRandomizeSeed.bind(this)
-        
+
         this.generateSeed = this.generateSeed.bind(this)
         this.requestSeed = this.requestSeed.bind(this)
         this.requestSpoiler = this.requestSpoiler.bind(this)
@@ -31,18 +31,21 @@ const SeedGenerator = observer(class SeedGenerator extends React.Component {
 
     async generateSeed(fileToUpload) {
         seedGeneratorStore.setProcessing()
+        this.setState({ showDownload: false })
 
         try {
             await this.requestSeed(fileToUpload)
-            await this.requestSpoiler()
-    
-            seedGeneratorStore.clearProcessing()
+            await this.requestSpoiler()    
+            
             seedGeneratorStore.clearError()
         }
         catch(error) { 
-            seedGeneratorStore.clearProcessing()
             seedGeneratorStore.setError('Whoops! Something went wrong!')
+            this.setState({ showDownload: false })
             console.log(error) 
+        }
+        finally {
+            seedGeneratorStore.clearProcessing()
         }
     }
 
@@ -74,6 +77,9 @@ const SeedGenerator = observer(class SeedGenerator extends React.Component {
             method: 'GET',
         })
 
+        if (!response || !response.headers)
+            return null
+
         const file = await response.blob()
         const name = this.parseResponse(response, 'filename')
 
@@ -102,9 +108,11 @@ const SeedGenerator = observer(class SeedGenerator extends React.Component {
         }
 
         if (seedGeneratorStore.goal === 'Dark Gaia') {
-            if (isNaN(seedGeneratorStore.statues) || seedGeneratorStore.statues < 1 || seedGeneratorStore.statues > 6) {
-                console.log(seedGeneratorStore.statues)
-                seedGeneratorStore.setError('Hey, man. You need to enter a valid non-negative integer (between 1 and 6) for a statue count!')
+            const validText = isNaN(seedGeneratorStore.statues) && seedGeneratorStore.statues === 'Random'
+            
+            if (!validText && (seedGeneratorStore.statues < 0 || seedGeneratorStore.statues > 6)) {
+                console.log('Statues', seedGeneratorStore.statues)
+                seedGeneratorStore.setError('Hey, man. You need to enter a valid non-negative integer (between 0 and 6) for a statue count!')
                 return
             }
         }
@@ -165,13 +173,13 @@ const SeedGenerator = observer(class SeedGenerator extends React.Component {
                             </FormGroup>            
                             <Button type="submit" onClick={this.handleSubmit}>Generate ROM</Button>
                         </Form>
-                </Row>
-                { showDownload && (
-                    <Row style={{marginTop: 20}}>
-                        <Button onClick={this.handleDownloadRom}>Download Randomized ROM</Button>
-                        <Button onClick={this.handleDownloadSpoiler} style={{ marginLeft: 10 }}>Download Spoiler Log</Button>
                     </Row>
-                )}
+                    { showDownload && (
+                        <Row style={{marginTop: 20}}>
+                            <Button onClick={this.handleDownloadRom}>Download Randomized ROM</Button>
+                            <Button onClick={this.handleDownloadSpoiler} style={{ marginLeft: 10 }}>Download Spoiler Log</Button>
+                        </Row>
+                    )}
                     </CardBody>
                 </Card>
                 
@@ -191,11 +199,6 @@ const SeedGenerator = observer(class SeedGenerator extends React.Component {
         
         if (seedGeneratorStore.goal === 'Dark Gaia') {
             let statues = seedGeneratorStore.statues
-
-            if (seedGeneratorStore.statuesRandom) {
-                statues = this.getRandomInRange(0, 6)
-                console.log('Generating random statue count', statues)
-            }
 
             formData.append('statues', statues)
         }           

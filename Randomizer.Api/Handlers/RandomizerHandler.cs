@@ -33,14 +33,20 @@ namespace Randomizer.Api.Handlers
                     Arguments = $"-c \"{cmd}\"",
                     WorkingDirectory = _randomizerConfiguration.PathToRandomizer,
                     RedirectStandardError = true,
+                    RedirectStandardOutput = true
                 };
 
                 process.Start();
                 process.WaitForExit();
 
                 var err = await process.StandardError.ReadToEndAsync();
+                var info = await process.StandardOutput.ReadToEndAsync();
+
                 if (err.Length > 0)
                     return new RandomizerRomCreationDetails { Success = false, Error = err };
+
+                if (info.Contains("ERROR"))
+                    return new RandomizerRomCreationDetails { Success = false, Error = info };
             }
 
             var path = $"{uploadedFileDetails.Directory}\\{randomizedFilename}.sfc";
