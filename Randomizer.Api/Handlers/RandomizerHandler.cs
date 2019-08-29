@@ -1,10 +1,11 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Randomizer.Api.Configuration;
-using Randomizer.Api.Extensions;
 using Randomizer.Api.Models;
 
 namespace Randomizer.Api.Handlers
@@ -18,22 +19,17 @@ namespace Randomizer.Api.Handlers
             _randomizerConfiguration = randomizerConfiguration;
         }
 
-        public async Task<RandomizerRomCreationDetails> CreateRandomizedRomAsync(long seed, UploadedFileDetails uploadedFileDetails, SeedParameters parameters)
+        public async Task<RandomizerRomCreationDetails> CreateRandomizedRomAsync(UploadedFileDetails uploadedFileDetails, SeedParameters parameters)
         {
-            var version = _randomizerConfiguration.RandomizerVersion;
-            var randomizedFilename = parameters.GenerateFilenameScheme(version, seed);
-            var offset = 0;
-
             using (var process = new Process())
             {
-                var cmd = BuildPythonString(version, seed, offset, uploadedFileDetails.FullPath, randomizedFilename, parameters);
-                
-                process.StartInfo = new ProcessStartInfo("python")
+                var workingDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+                process.StartInfo = new ProcessStartInfo($"{workingDirectory}\\iogr_rom.exe")
                 {
-                    Arguments = $"-c \"{cmd}\"",
-                    WorkingDirectory = _randomizerConfiguration.PathToRandomizer,
+                    Arguments = BuildInvocationArguments(uploadedFileDetails.FullPath, parameters),
                     RedirectStandardError = true,
-                    RedirectStandardOutput = true
+                    RedirectStandardOutput = true,
+                    WorkingDirectory = workingDirectory
                 };
 
                 process.Start();
@@ -43,14 +39,16 @@ namespace Randomizer.Api.Handlers
                 var info = await process.StandardOutput.ReadToEndAsync();
 
                 if (err.Length > 0)
-                    return new RandomizerRomCreationDetails { Success = false, Error = err };
+                    return new RandomizerRomCreationDetails { Success = false, Output = $"{workingDirectory}\\iogr_rom.exe {BuildInvocationArguments(uploadedFileDetails.FullPath, parameters)}\r\n\n{err}\r\n\n{info}"};
 
-                if (info.Contains("ERROR"))
-                    return new RandomizerRomCreationDetails { Success = false, Error = info };
+                if (info.IndexOf("ERROR", 0, StringComparison.OrdinalIgnoreCase) > -1)
+                    return new RandomizerRomCreationDetails { Success = false, Output = $"{workingDirectory}\\iogr_rom.exe {BuildInvocationArguments(uploadedFileDetails.FullPath, parameters)}\r\n\n{err}\r\n\n{info}"};
+
+                var filename = info.Substring(13);
+                filename = filename.Trim('\r', '\n', ' ');
+
+                return new RandomizerRomCreationDetails { Success = true, RomPath = $"{uploadedFileDetails.Directory}//{filename}"};
             }
-
-            var path = $"{uploadedFileDetails.Directory}\\{randomizedFilename}.sfc";
-            return new RandomizerRomCreationDetails { Success = true, RomPath = path};
         }
 
         public async Task<MemoryStream> GetFileStreamAndDeleteRandomizedRomAsync(UploadedFileDetails uploadedFileDetails, string romPath)
@@ -72,23 +70,19 @@ namespace Randomizer.Api.Handlers
             return !files.Any() ? null : files.First();
         }
 
-        private string BuildPythonString(string version, long seed, long offset, string path, string filename, SeedParameters parameters)
+        private string BuildInvocationArguments(string path, SeedParameters parameters)
         {
             var builder = new StringBuilder();
-            var firebird = parameters.Firebird ? "True" : "False";
-
-            builder.Append("import iogr_rom;iogr_rom.generate_rom(");
-            builder.Append($"'{version}'");
-            builder.Append($",{offset}");
-            builder.Append($",{seed}");
-            builder.Append($",'{path}'");
-            builder.Append($",'{filename}'");
-            builder.Append($",'{parameters.Difficulty}'");
-            builder.Append($",'{parameters.Goal}'");
-            builder.Append($",'{parameters.Mode}'");
-            builder.Append($",'{parameters.Statues}'");
-            builder.Append($",'{parameters.Variations}'");
-            builder.Append($",{firebird})");
+            
+            builder.Append($"--path {path} ");
+            builder.Append($"--seed {parameters.Seed} ");
+            builder.Append($"--difficulty \"{parameters.Difficulty}\" ");
+            builder.Append($"--goal \"{parameters.Goal}\" ");
+            builder.Append($"--logic \"{parameters.Logic}\" ");
+            builder.Append($"--enemizer \"{parameters.Enemizer}\" ");
+            builder.Append($"--start-pos \"{parameters.StartPosition}\" ");
+            builder.Append($"--statues \"{parameters.Statues}\" ");
+            builder.Append($"--variant \"{parameters.Variations}\" ");
 
             return builder.ToString();
         }

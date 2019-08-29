@@ -1,16 +1,31 @@
 import React from 'react'
-import { Navbar, NavbarBrand, Nav, NavItem, NavLink } from 'shards-react'
 import { FaGithub } from 'react-icons/fa'
+import { AppBar, Toolbar, Typography, Link } from '@material-ui/core'
 
-export default class Navigation extends React.Component {
-    render() {
-        return (
-            <Navbar type="dark" theme="primary">
-                <NavbarBrand href="#"><span style={{ fontWeight: 'bold'}}>Illusion of Gaia Randomizer</span><span style={{ marginLeft: 20}}>v1.5.1</span></NavbarBrand>
-                <Nav navbar>
-                    <NavItem><NavLink href="https://www.github.com/dontbagume/iogr"><FaGithub color="white" size="30" /></NavLink></NavItem>
-                </Nav>
-            </Navbar>
-        )
+const style = {
+    Root: {
+        flexGrow: 1
+    },
+    Title: {
+        color: '#FFFFFF'
+    },
+    Subtitle: {
+        marginLeft: "1em",
+        color: '#FFFFFF',
+        flexGrow: 1
     }
+}
+
+export default function Navigation() {
+    return (
+        <div className={style.Root}>
+            <AppBar position="static">
+                <Toolbar>
+                    <Typography variant="h5" style={style.Title}>Illusion of Gaia Randomizer</Typography>
+                    <Typography variant="subtitle2" style={style.Subtitle}>v2.6.0</Typography>
+                    <Link href="https://www.github.com/dontbagume/iogr"><FaGithub color="white" size="30" /></Link>
+                </Toolbar>
+            </AppBar>
+        </div>
+    )
 }

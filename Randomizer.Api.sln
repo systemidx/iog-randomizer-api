@@ -3,7 +3,29 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29102.190
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Randomizer.Api", "Randomizer.Api\Randomizer.Api.csproj", "{A6EE48D9-E1B8-4592-BBD2-0096BA1BED06}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Randomizer.Api", "Randomizer.Api\Randomizer.Api.csproj", "{A6EE48D9-E1B8-4592-BBD2-0096BA1BED06}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{4A9C093A-3932-4A4A-B717-348795627B13}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		LICENSE = LICENSE
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Randomizer", "Randomizer", "{523FFC08-458D-4F49-AC0A-94884465549F}"
+	ProjectSection(SolutionItems) = preProject
+		Randomizer\_hashlib.pyd = Randomizer\_hashlib.pyd
+		Randomizer\bz2.pyd = Randomizer\bz2.pyd
+		Randomizer\iogr_rom.exe = Randomizer\iogr_rom.exe
+		Randomizer\iogr_rom.exe.manifest = Randomizer\iogr_rom.exe.manifest
+		Randomizer\Microsoft.VC90.CRT.manifest = Randomizer\Microsoft.VC90.CRT.manifest
+		Randomizer\msvcm90.dll = Randomizer\msvcm90.dll
+		Randomizer\msvcp90.dll = Randomizer\msvcp90.dll
+		Randomizer\msvcr90.dll = Randomizer\msvcr90.dll
+		Randomizer\python27.dll = Randomizer\python27.dll
+		Randomizer\select.pyd = Randomizer\select.pyd
+		Randomizer\unicodedata.pyd = Randomizer\unicodedata.pyd
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

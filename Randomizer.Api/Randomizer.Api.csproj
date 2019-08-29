@@ -3,9 +3,12 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
     <AspNetCoreHostingModel>OutOfProcess</AspNetCoreHostingModel>
+    <ApplicationInsightsResourceId>/subscriptions/614288d7-2bb2-459b-8099-1df6639ca605/resourcegroups/iogr/providers/microsoft.insights/components/iogr</ApplicationInsightsResourceId>
+    <ApplicationInsightsAnnotationResourceId>/subscriptions/614288d7-2bb2-459b-8099-1df6639ca605/resourcegroups/iogr/providers/microsoft.insights/components/iogr</ApplicationInsightsAnnotationResourceId>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.5.1" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.3" />
@@ -14,5 +17,13 @@
   <ItemGroup>
     <Folder Include="wwwroot\public\" />
   </ItemGroup>
+
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services" />
+  </ItemGroup>
+  
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="xcopy /s &quot;$(SolutionDir)Randomizer&quot; &quot;$(TargetDir)&quot;" />
+  </Target>
 
 </Project>
