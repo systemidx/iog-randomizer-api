@@ -45,6 +45,8 @@ def generateSeed() -> Response:
         return make_response(str(e.args), 400)
     except FileNotFoundError:
         return make_response(404)
+    except Exception e:
+        return make_response(e, 500)
 
 
 if __name__ == '__main__':
