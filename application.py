@@ -5,7 +5,6 @@ from randomizer.iogr_rom import Randomizer, generate_filename
 from randomizer.errors import FileNotFoundError
 from randomizer.models.randomizer_data import RandomizerData
 
-from .exceptions.exceptions import InvalidRequestParameters
 from .requests.generate_seed_request import GenerateSeedRequest
 from .config import ROM_PATH
 
@@ -42,8 +41,8 @@ def generateSeed() -> Response:
         # spoiler = randomizer.generate_spoiler()
 
         return make_response(patch, 200)
-    except InvalidRequestParameters as e:
-        return make_response(e.message, e.status_code)
+    except ValueError as e:
+        return make_response(e.message, 400)
     except FileNotFoundError:
         return make_response(404)
 

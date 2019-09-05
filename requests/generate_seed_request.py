@@ -8,8 +8,6 @@ from randomizer.models.enums.enemizer import Enemizer
 from randomizer.models.enums.start_location import StartLocation
 from randomizer.models.enums.entrance_shuffle import EntranceShuffle
 
-from ..exceptions.exceptions import InvalidRequestParameters
-
 
 class GenerateSeedRequest(object):
     schema = {
@@ -132,7 +130,7 @@ class GenerateSeedRequest(object):
         self.overworld_shuffle = getSwitch(payload.get("overworldShuffle"))
 
         if self.red_jewel_madness and self.ohko:
-            raise InvalidRequestParameters("Can't have OHKO and Red Jewel Madness both flagged")
+            raise ValueError("Can't have OHKO and Red Jewel Madness both flagged")
 
     # endregion
 
