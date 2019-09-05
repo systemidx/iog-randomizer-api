@@ -25,7 +25,7 @@ def hello() -> Response:
 def generateSeed() -> Response:
     try:
 
-        rom_path = "C:\\Users\\Bryon\\Documents\\Illusion of Gaia.sfc"
+        rom_path = ROM_PATH
 
         request_data = GenerateSeedRequest(request.get_json())
         settings = RandomizerData(request_data.seed, request_data.difficulty, request_data.goal,
@@ -45,8 +45,6 @@ def generateSeed() -> Response:
         return make_response(str(e.args), 400)
     except FileNotFoundError:
         return make_response(404)
-    except Exception e:
-        return make_response(e, 500)
 
 
 if __name__ == '__main__':
