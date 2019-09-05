@@ -42,7 +42,7 @@ def generateSeed() -> Response:
 
         return make_response(patch, 200)
     except ValueError as e:
-        return make_response(e.message, 400)
+        return make_response(str(e.args), 400)
     except FileNotFoundError:
         return make_response(404)
 
