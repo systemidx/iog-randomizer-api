@@ -8,7 +8,7 @@ from randomizer.models.enums.enemizer import Enemizer
 from randomizer.models.enums.start_location import StartLocation
 from randomizer.models.enums.entrance_shuffle import EntranceShuffle
 
-from api.exceptions.exceptions import InvalidRequestParameters
+from ..exceptions.exceptions import InvalidRequestParameters
 
 
 class GenerateSeedRequest(object):
