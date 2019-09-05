@@ -10,42 +10,40 @@ from requests.generate_seed_request import GenerateSeedRequest
 from constants import ROM_DATA
 
 
+app = Flask(__name__)
+rom = tempfile.TemporaryFile()
+rom.write(ROM_DATA)
 
-def create_app(test_config:None):
-    app = Flask(__name__)
-    rom = tempfile.TemporaryFile()
-    rom.write(ROM_DATA)
-
-    @app.errorhandler(400)
-    def bad_request(errors):
-        return make_response(jsonify({'errors': errors.description}), 400)
+@app.errorhandler(400)
+def bad_request(errors):
+    return make_response(jsonify({'errors': errors.description}), 400)
 
 
-    @app.route("/v1/hello", methods=["GET"])
-    def hello() -> Response:
-        return make_response("Hello!", 200)
+@app.route("/v1/hello", methods=["GET"])
+def hello() -> Response:
+    return make_response("Hello!", 200)
 
-    @app.route("/v1/seed/generate", methods=["POST"])
-    @expects_json(GenerateSeedRequest.schema)
-    def generateSeed() -> Response:
-        try:
-            rom_path = rom.name
+@app.route("/v1/seed/generate", methods=["POST"])
+@expects_json(GenerateSeedRequest.schema)
+def generateSeed() -> Response:
+    try:
+        rom_path = rom.name
 
-            request_data = GenerateSeedRequest(request.get_json())
-            settings = RandomizerData(request_data.seed, request_data.difficulty, request_data.goal,
-                                    request_data.logic, request_data.statues, request_data.enemizer, request_data.start_location,
-                                    request_data.firebird, request_data.ohko)
+        request_data = GenerateSeedRequest(request.get_json())
+        settings = RandomizerData(request_data.seed, request_data.difficulty, request_data.goal,
+                                request_data.logic, request_data.statues, request_data.enemizer, request_data.start_location,
+                                request_data.firebird, request_data.ohko)
 
-            rom_filename = generate_filename(settings, "sfc")
-            #spoiler_filename = generate_filename(settings, "json")
+        rom_filename = generate_filename(settings, "sfc")
+        #spoiler_filename = generate_filename(settings, "json")
 
-            randomizer = Randomizer(rom_filename, rom_path, settings)
+        randomizer = Randomizer(rom_filename, rom_path, settings)
 
-            patch = randomizer.generate_rom()
-            # spoiler = randomizer.generate_spoiler()
+        patch = randomizer.generate_rom()
+        # spoiler = randomizer.generate_spoiler()
 
-            return make_response(patch, 200)
-        except ValueError as e:
-            return make_response(str(e.args), 400)
-        except FileNotFoundError:
-            return make_response(404)
+        return make_response(patch, 200)
+    except ValueError as e:
+        return make_response(str(e.args), 400)
+    except FileNotFoundError:
+        return make_response(404)
