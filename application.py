@@ -5,8 +5,8 @@ from randomizer.iogr_rom import Randomizer, generate_filename
 from randomizer.errors import FileNotFoundError
 from randomizer.models.randomizer_data import RandomizerData
 
-from .requests.generate_seed_request import GenerateSeedRequest
-from .config import ROM_PATH
+from requests.generate_seed_request import GenerateSeedRequest
+from config import ROM_PATH
 
 app = Flask(__name__)
 
