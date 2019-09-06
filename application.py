@@ -48,7 +48,7 @@ def generateSeed(retries: int = 0) -> Response:
         logging.info(patch)
         spoiler = randomizer.generate_spoiler()
 
-        return make_response(json.dumps({'patch': patch, 'spoiler': spoiler}), 200)
+        return make_response(json.dumps({'patch': patch, 'patchName': rom_filename, 'spoiler': spoiler, 'spoilerFilename': spoiler_filename}), 200)
     except ValueError as e:
         return make_response(str(e.args), 400)
     except FileNotFoundError:
