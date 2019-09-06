@@ -14,6 +14,7 @@ app = Flask(__name__)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
 cors = CORS(app, resources={r"/v1/seed/generate": {"origins": "*"}})
+logging.basicConfig(level=logging.DEBUG)
 
 @app.errorhandler(400)
 def bad_request(errors):
@@ -23,8 +24,6 @@ def bad_request(errors):
 @app.route("/v1/seed/generate", methods=["POST"])
 @expects_json(GenerateSeedRequest.schema)
 def generateSeed(retries: int = 0) -> Response:
-    logger = logging.getLogger().addHandler(logging.StreamHandler(sys.stdout))
-    
     if retries > 3:
         return make_response("Failed to generate a seed", 500)
 
@@ -33,18 +32,20 @@ def generateSeed(retries: int = 0) -> Response:
 
         request_params = request.get_json()
         request_data = GenerateSeedRequest(request_params)
-        logger.info(request_params)
+        logging.info(request_params)
 
         settings = RandomizerData(request_data.seed, request_data.difficulty, request_data.goal,
                                   request_data.logic, request_data.statues, request_data.enemizer, request_data.start_location,
                                   request_data.firebird, request_data.ohko)
 
         rom_filename = generate_filename(settings, "sfc")
+        logging.info(rom_filename)
         spoiler_filename = generate_filename(settings, "json")
 
         randomizer = Randomizer(rom_filename, rom_path, settings)
 
         patch = randomizer.generate_rom()
+        logging.info(patch)
         spoiler = randomizer.generate_spoiler()
 
         return make_response(json.dumps({'patch': patch, 'spoiler': spoiler}), 200)
@@ -53,6 +54,7 @@ def generateSeed(retries: int = 0) -> Response:
     except FileNotFoundError:
         return make_response(404)
     except Exception as e:
+        logging.error(e.args)
         return generateSeed(retries + 1)
 
 
