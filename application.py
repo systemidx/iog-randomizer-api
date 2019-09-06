@@ -14,7 +14,6 @@ app = Flask(__name__)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
 cors = CORS(app, resources={r"/v1/seed/generate": {"origins": "*"}})
-logger = logging.getLogger().addHandler(logging.StreamHandler(sys.stdout))
 
 @app.errorhandler(400)
 def bad_request(errors):
@@ -24,6 +23,8 @@ def bad_request(errors):
 @app.route("/v1/seed/generate", methods=["POST"])
 @expects_json(GenerateSeedRequest.schema)
 def generateSeed(retries: int = 0) -> Response:
+    logger = logging.getLogger().addHandler(logging.StreamHandler(sys.stdout))
+    
     if retries > 3:
         return make_response("Failed to generate a seed", 500)
 
