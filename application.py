@@ -1,5 +1,6 @@
 import tempfile
 from flask import Flask, escape, request, Response, make_response, jsonify, json, g
+from flask_cors import CORS
 from flask_expects_json import expects_json
 
 from randomizer.iogr_rom import Randomizer, generate_filename
@@ -10,15 +11,14 @@ from requests.generate_seed_request import GenerateSeedRequest
 
 
 app = Flask(__name__)
+app.config['CORS_HEADERS'] = 'Content-Type'
+
+cors = CORS(app, resources={r"/v1/seed/generate": {"origins": "*"}})
 
 @app.errorhandler(400)
 def bad_request(errors):
     return make_response(jsonify({'errors': errors.description}), 400)
 
-
-@app.route("/v1/hello", methods=["GET"])
-def hello() -> Response:
-    return make_response("Hello!", 200)
 
 @app.route("/v1/seed/generate", methods=["POST"])
 @expects_json(GenerateSeedRequest.schema)

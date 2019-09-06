@@ -9,6 +9,6 @@ setuptools.setup(
     description='The Illusion of Gaia Randomizer API',
     author='bryon_w',
     packages=setuptools.find_packages(),
-    install_requires=['flask', 'flask_expects_json', 'iog_randomizer'],
+    install_requires=['flask', 'flask_expects_json','flask_cors', 'iog_randomizer'],
     python_requires='>=3.7'
 )
