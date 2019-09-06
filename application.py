@@ -15,6 +15,7 @@ app.config['CORS_HEADERS'] = 'Content-Type'
 
 cors = CORS(app, resources={r"/v1/seed/generate": {"origins": "*"}})
 logging.basicConfig(level=logging.DEBUG)
+randomizer = Randomizer("./data/gaia.bin")
 
 @app.errorhandler(400)
 def bad_request(errors):
@@ -28,8 +29,6 @@ def generateSeed(retries: int = 0) -> Response:
         return make_response("Failed to generate a seed", 500)
 
     try:
-        rom_path = "./data/gaia.bin"
-
         request_params = request.get_json()
         request_data = GenerateSeedRequest(request_params)
         logging.info(request_params)
@@ -41,11 +40,8 @@ def generateSeed(retries: int = 0) -> Response:
         rom_filename = generate_filename(settings, "sfc")
         logging.info(rom_filename)
         spoiler_filename = generate_filename(settings, "json")
-
-        randomizer = Randomizer(rom_filename, rom_path, settings)
-
-        patch = randomizer.generate_rom()
-        logging.info(patch)
+        patch = randomizer.generate_rom(rom_filename, settings)
+        
         spoiler = randomizer.generate_spoiler()
 
         return make_response(json.dumps({'patch': patch, 'patchName': rom_filename, 'spoiler': spoiler, 'spoilerFilename': spoiler_filename}), 200)
