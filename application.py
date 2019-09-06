@@ -1,4 +1,6 @@
 import tempfile
+import logging
+
 from flask import Flask, escape, request, Response, make_response, jsonify, json, g
 from flask_cors import CORS
 from flask_expects_json import expects_json
@@ -14,6 +16,8 @@ app = Flask(__name__)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
 cors = CORS(app, resources={r"/v1/seed/generate": {"origins": "*"}})
+logging.basicConfig(filename=tempfile.TemporaryFile().name, filemode='w', format='%(message)s', level=logging.DEBUG)
+logger = logging.getLogger("IOGR-API")
 
 @app.errorhandler(400)
 def bad_request(errors):
@@ -45,6 +49,8 @@ def generateSeed() -> Response:
     except FileNotFoundError:
         return make_response(404)
     except Exception as e:
+        print(e)
+        logger.error(e)
         return make_response(e.args, 500)
 
 if __name__ == "__main__":
