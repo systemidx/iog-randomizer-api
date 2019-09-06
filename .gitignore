@@ -2,6 +2,7 @@
 .vs/
 **/*.sfc
 **/__pycache__
+data/iogr
 
 # dependencies
 /node_modules
