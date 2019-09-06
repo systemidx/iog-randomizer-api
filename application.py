@@ -53,6 +53,8 @@ def generateSeed(retries: int = 0) -> Response:
         return make_response(str(e.args), 400)
     except FileNotFoundError:
         return make_response(404)
+    except RecursionError:
+        return generateSeed(retries + 1)
     except Exception as e:
         logging.error(e.args)
         return generateSeed(retries + 1)
