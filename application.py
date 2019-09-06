@@ -26,7 +26,10 @@ def bad_request(errors):
 
 @app.route("/v1/seed/generate", methods=["POST"])
 @expects_json(GenerateSeedRequest.schema)
-def generateSeed() -> Response:
+def generateSeed(retries: int = 0) -> Response:
+    if retries > 3:
+        return make_response("Failed to generate a seed", 500)
+
     try:
         rom_path = "./data/gaia.bin"
 
@@ -49,9 +52,7 @@ def generateSeed() -> Response:
     except FileNotFoundError:
         return make_response(404)
     except Exception as e:
-        print(e)
-        logger.error(e)
-        return make_response(e.args, 500)
+        return generateSeed(retries + 1)
 
 if __name__ == "__main__":
     app.run(debug=True)
