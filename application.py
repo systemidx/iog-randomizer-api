@@ -1,8 +1,6 @@
-import tempfile
-import logging
-import sys
+import json, logging, sys
 
-from flask import Flask, escape, request, Response, make_response, jsonify, json, g
+from flask import Flask, request, Response, make_response, jsonify, json
 from flask_cors import CORS
 from flask_expects_json import expects_json
 
@@ -11,7 +9,6 @@ from randomizer.errors import FileNotFoundError
 from randomizer.models.randomizer_data import RandomizerData
 
 from requests.generate_seed_request import GenerateSeedRequest
-
 
 app = Flask(__name__)
 app.config['CORS_HEADERS'] = 'Content-Type'
@@ -33,26 +30,30 @@ def generateSeed(retries: int = 0) -> Response:
     try:
         rom_path = "./data/gaia.bin"
 
-        request_data = GenerateSeedRequest(request.get_json())
+        request_params = request.get_json()
+        request_data = GenerateSeedRequest(request_params)
+        logger.info(request_params)
+
         settings = RandomizerData(request_data.seed, request_data.difficulty, request_data.goal,
-                                request_data.logic, request_data.statues, request_data.enemizer, request_data.start_location,
-                                request_data.firebird, request_data.ohko)
+                                  request_data.logic, request_data.statues, request_data.enemizer, request_data.start_location,
+                                  request_data.firebird, request_data.ohko)
 
         rom_filename = generate_filename(settings, "sfc")
-        #spoiler_filename = generate_filename(settings, "json")
+        spoiler_filename = generate_filename(settings, "json")
 
         randomizer = Randomizer(rom_filename, rom_path, settings)
 
         patch = randomizer.generate_rom()
-        # spoiler = randomizer.generate_spoiler()
+        spoiler = randomizer.generate_spoiler()
 
-        return make_response(patch, 200)
+        return make_response(json.dumps({'patch': patch, 'spoiler': spoiler}), 200)
     except ValueError as e:
         return make_response(str(e.args), 400)
     except FileNotFoundError:
         return make_response(404)
     except Exception as e:
         return generateSeed(retries + 1)
+
 
 if __name__ == "__main__":
     app.run(debug=True)
