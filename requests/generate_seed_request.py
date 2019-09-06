@@ -72,7 +72,7 @@ class GenerateSeedRequest(object):
         statues = payload.get("statues")
 
         if statues is not None:
-            if statues == "random":
+            if statues.lower() == "random":
                 self.statues = statues
             else:
                 count = int(statues)
