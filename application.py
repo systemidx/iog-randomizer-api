@@ -2,7 +2,7 @@ import json, logging, sys
 
 from flask import Flask, request, Response, make_response, jsonify, json
 from flask_cors import CORS
-from flask_expects_json import expects_json
+from flask_expects_json import expects_json, ValidationError
 
 from randomizer.iogr_rom import Randomizer, generate_filename
 from randomizer.errors import FileNotFoundError
@@ -16,10 +16,6 @@ app.config['CORS_HEADERS'] = 'Content-Type'
 cors = CORS(app, resources={r"/v1/seed/generate": {"origins": "*"}})
 logging.basicConfig(level=logging.DEBUG)
 randomizer = Randomizer("./data/gaia.bin")
-
-@app.errorhandler(400)
-def bad_request(errors):
-    return make_response(jsonify({'errors': errors.description}), 400)
 
 
 @app.route("/v1/seed/generate", methods=["POST"])
