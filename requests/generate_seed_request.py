@@ -31,6 +31,22 @@ class GenerateSeedRequest(object):
         'required': []
     }
 
+    seed = random.randrange(0, 9999999)
+    difficulty = Difficulty.NORMAL
+    goal = Goal.DARK_GAIA
+    statues = "Random"
+    logic = Logic.COMPLETABLE
+    enemizer = Enemizer.NONE
+    start_location = StartLocation.SOUTH_CAPE
+    entrance_shuffle = EntranceShuffle.NONE
+    allow_glitches = False
+    ohko = False
+    red_jewel_madness = False
+    firebird = False
+    boss_shuffle = False
+    dungeon_shuffle = False
+    overworld_shuffle = False
+
     def __init__(self, payload):
         self._validateSeed(payload)
         self._validateDifficulty(payload)
@@ -47,23 +63,14 @@ class GenerateSeedRequest(object):
 
         if isinstance(seed, numbers.Number) and seed > 0:
             self.seed = seed
-        else:
-            self.seed = random.randrange(0, 9999999)
 
     def _validateDifficulty(self, payload):
         difficulty = payload.get("difficulty")
-
-        try:
-            self.difficulty = Difficulty(difficulty)
-        except:
-            self.difficulty = Difficulty.NORMAL
+        self.difficulty = Difficulty(difficulty)
 
     def _validateGoal(self, payload):
         goal = payload.get("goal")
-        try:
-            self.goal = Goal(goal)
-        except:
-            self.goal = Goal.DARK_GAIA
+        self.goal = Goal(goal)
 
         if self.goal == Goal.DARK_GAIA:
             self._validateStatues(payload)
@@ -80,40 +87,22 @@ class GenerateSeedRequest(object):
                     self.statues = statues
                 else:
                     self.statues = "4"
-        else:
-            self.statues = "4"
 
     def _validateLogic(self, payload):
         logic = payload.get("logic")
-
-        try:
-            self.logic = Logic(logic)
-        except:
-            self.logic = Logic.COMPLETABLE
+        self.logic = Logic(logic)
 
     def _validateEnemizer(self, payload):
         enemizer = payload.get("enemizer")
-
-        try:
-            self.enemizer = Enemizer(enemizer)
-        except:
-            self.enemizer = Enemizer.NONE
+        self.enemizer = Enemizer(enemizer)
 
     def _validateStartLocation(self, payload):
         start_location = payload.get("startLocation")
-
-        try:
-            self.start_location = StartLocation(start_location)
-        except:
-            self.start_location = StartLocation.SOUTH_CAPE
+        self.start_location = StartLocation(start_location)
 
     def _validateEntranceShuffle(self, payload):
         entrance_shuffle = payload.get("entranceShuffle")
-
-        try:
-            self.entrance_shuffle = EntranceShuffle(entrance_shuffle)
-        except:
-            self.entrance_shuffle = EntranceShuffle.NONE
+        self.entrance_shuffle = EntranceShuffle(entrance_shuffle)
 
     def _validateSwitches(self, payload):
         def getSwitch(switch):
