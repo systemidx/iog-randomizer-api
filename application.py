@@ -1,0 +1,56 @@
+import json, logging, sys
+
+from flask import Flask, request, Response, make_response, jsonify, json
+from flask_cors import CORS
+from flask_expects_json import expects_json, ValidationError
+
+from randomizer.iogr_rom import Randomizer, generate_filename
+from randomizer.errors import FileNotFoundError
+from randomizer.models.randomizer_data import RandomizerData
+
+from requests.generate_seed_request import GenerateSeedRequest
+
+app = Flask(__name__)
+app.config['CORS_HEADERS'] = 'Content-Type'
+
+cors = CORS(app, resources={r"/v1/seed/generate": {"origins": "*"}})
+logging.basicConfig(level=logging.DEBUG)
+randomizer = Randomizer("./data/gaia.bin")
+
+
+@app.route("/v1/seed/generate", methods=["POST"])
+@expects_json(GenerateSeedRequest.schema)
+def generateSeed(retries: int = 0) -> Response:
+    if retries > 3:
+        return make_response("Failed to generate a seed", 500)
+
+    try:
+        request_params = request.get_json()
+        request_data = GenerateSeedRequest(request_params)
+        logging.info(request_params)
+
+        settings = RandomizerData(request_data.seed, request_data.difficulty, request_data.goal,
+                                  request_data.logic, request_data.statues, request_data.enemizer, request_data.start_location,
+                                  request_data.firebird, request_data.ohko)
+
+        rom_filename = generate_filename(settings, "sfc")
+        logging.info(rom_filename)
+        spoiler_filename = generate_filename(settings, "json")
+        patch = randomizer.generate_rom(rom_filename, settings)
+        
+        spoiler = randomizer.generate_spoiler()
+
+        return make_response(json.dumps({'patch': patch, 'patchName': rom_filename, 'spoiler': spoiler, 'spoilerFilename': spoiler_filename}), 200)
+    except ValueError as e:
+        return make_response(str(e.args), 400)
+    except FileNotFoundError:
+        return make_response(404)
+    except RecursionError:
+        return generateSeed(retries + 1)
+    except Exception as e:
+        logging.error(e.args)
+        return generateSeed(retries + 1)
+
+
+if __name__ == "__main__":
+    app.run(debug=True)
