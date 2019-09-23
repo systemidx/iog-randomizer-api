@@ -61,7 +61,7 @@ class GenerateSeedRequest(object):
     def _validateSeed(self, payload):
         seed = payload.get("seed")
 
-        if isinstance(seed, numbers.Number) and seed > 0:
+        if isinstance(seed, numbers.Number) and seed > -1:
             self.seed = seed
 
     def _validateDifficulty(self, payload):
