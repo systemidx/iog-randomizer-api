@@ -31,7 +31,7 @@ def generateSeed(retries: int = 0) -> Response:
 
         settings = RandomizerData(request_data.seed, request_data.difficulty, request_data.goal,
                                   request_data.logic, request_data.statues, request_data.enemizer, request_data.start_location,
-                                  request_data.firebird, request_data.ohko)
+                                  request_data.firebird, request_data.ohko, request_data.red_jewel_madness)
 
         rom_filename = generate_filename(settings, "sfc")
         logging.info(rom_filename)
