@@ -26,21 +26,12 @@ def generateSeed(retries: int = 0) -> Response:
 
     try:
         request_params = request.get_json()
-        request_data = GenerateSeedRequest(request_params)
-        logging.info(request_params)
-
-        settings = RandomizerData(request_data.seed, request_data.difficulty, request_data.goal,
-                                  request_data.logic, request_data.statues, request_data.enemizer, request_data.start_location,
-                                  request_data.firebird, request_data.ohko, request_data.red_jewel_madness)
-
-        rom_filename = generate_filename(settings, "sfc")
-        logging.info(rom_filename)
-        spoiler_filename = generate_filename(settings, "json")
-        patch = randomizer.generate_rom(rom_filename, settings)
+        logging.debug(request_params)
         
-        spoiler = randomizer.generate_spoiler()
+        request_data = GenerateSeedRequest(request_params)
+        response = __generate(request_data)
 
-        return make_response(json.dumps({'patch': patch, 'patchName': rom_filename, 'spoiler': spoiler, 'spoilerFilename': spoiler_filename}), 200)
+        return make_response(response, 200)
     except ValueError as e:
         return make_response(str(e.args), 400)
     except FileNotFoundError:
@@ -51,6 +42,27 @@ def generateSeed(retries: int = 0) -> Response:
         logging.error(e.args)
         return generateSeed(retries + 1)
 
+def __generate(request: GenerateSeedRequest):
+    settings = RandomizerData(request.seed, request.difficulty, request.goal, request.logic, request.statues, request.enemizer, request.start_location, request.firebird, request.ohko, request.red_jewel_madness)
+    payload = {}
+
+    payload.update(__generatePatch(settings))
+    if not request.generate_race_rom:
+        payload.update(__generateSpoiler(settings))
+
+    return json.dumps(payload)
+
+def __generatePatch(settings: RandomizerData):      
+    patch_filename = generate_filename(settings, "sfc") 
+    patch = randomizer.generate_rom(patch_filename, settings)    
+
+    return { 'patch': patch, 'patchName': patch_filename}
+
+def __generateSpoiler(settings: RandomizerData):
+    spoiler_filename = generate_filename(settings, "json")
+    spoiler = randomizer.generate_spoiler()
+
+    return { 'spoiler': spoiler, 'spoilerFilename': spoiler_filename }
 
 if __name__ == "__main__":
     app.run(debug=True)

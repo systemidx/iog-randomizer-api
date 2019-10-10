@@ -27,6 +27,7 @@ class GenerateSeedRequest(object):
             'bossShuffle': {'type': 'boolean'},
             'dungeonShuffle': {'type': 'boolean'},
             'overworldShuffle': {'type': 'boolean'},
+            'generateRaceRom': {'type': 'boolean'}
         },
         'required': []
     }
@@ -46,6 +47,7 @@ class GenerateSeedRequest(object):
     boss_shuffle = False
     dungeon_shuffle = False
     overworld_shuffle = False
+    generate_race_rom = False
 
     def __init__(self, payload):
         self._validateSeed(payload)
@@ -117,7 +119,8 @@ class GenerateSeedRequest(object):
         self.boss_shuffle = getSwitch(payload.get("bossShuffle"))
         self.dungeon_shuffle = getSwitch(payload.get("dungeonShuffle"))
         self.overworld_shuffle = getSwitch(payload.get("overworldShuffle"))
-
+        self.generate_race_rom = getSwitch(payload.get("generateRaceRom"))
+        
         if self.red_jewel_madness and self.ohko:
             raise ValueError("Can't have OHKO and Red Jewel Madness both flagged")
 
