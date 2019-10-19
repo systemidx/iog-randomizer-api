@@ -27,7 +27,7 @@ def generateSeed(retries: int = 0) -> Response:
     try:
         request_params = request.get_json()
         logging.debug(request_params)
-        
+
         request_data = GenerateSeedRequest(request_params)
         response = __generate(request_data)
 
