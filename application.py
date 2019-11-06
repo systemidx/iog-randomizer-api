@@ -43,7 +43,7 @@ def generateSeed(retries: int = 0) -> Response:
         return generateSeed(retries + 1)
 
 def __generate(request: GenerateSeedRequest):
-    settings = RandomizerData(request.seed, request.difficulty, request.goal, request.logic, request.statues, request.enemizer, request.start_location, request.firebird, request.ohko, request.red_jewel_madness)
+    settings = RandomizerData(request.seed, request.difficulty, request.goal, request.logic, request.statues, request.enemizer, request.start_location, request.firebird, request.ohko, request.red_jewel_madness, request.allow_glitches, request.boss_shuffle)
     payload = {}
 
     payload.update(__generatePatch(settings))
