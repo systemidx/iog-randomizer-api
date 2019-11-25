@@ -39,7 +39,7 @@ def generateSeed(retries: int = 0) -> Response:
     except RecursionError:
         return generateSeed(retries + 1)
     except Exception as e:
-        logging.error(e.args)
+        logging.exception("An unknown error has occurred")
         return generateSeed(retries + 1)
 
 def __generate(request: GenerateSeedRequest):
