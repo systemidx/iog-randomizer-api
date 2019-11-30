@@ -4,7 +4,7 @@ from flask import Flask, request, Response, make_response, jsonify, json
 from flask_cors import CORS
 from flask_expects_json import expects_json, ValidationError
 
-from randomizer.iogr_rom import Randomizer, generate_filename
+from randomizer.iogr_rom import Randomizer, generate_filename, VERSION
 from randomizer.errors import FileNotFoundError
 from randomizer.models.randomizer_data import RandomizerData
 
@@ -13,10 +13,16 @@ from requests.generate_seed_request import GenerateSeedRequest
 app = Flask(__name__)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
-cors = CORS(app, resources={r"/v1/seed/generate": {"origins": "*"}})
+cors = CORS(app, resources={
+    r"/v1/seed/generate": {"origins": "*"},
+    r"/v1/api/version": {"origins": "*"}
+})
 logging.basicConfig(level=logging.DEBUG)
 randomizer = Randomizer("./data/gaia.bin")
 
+@app.route("/v1/api/version", methods=["GET"])
+def getRandomizerVersion() -> Response:
+    return { "version": VERSION }
 
 @app.route("/v1/seed/generate", methods=["POST"])
 @expects_json(GenerateSeedRequest.schema)
