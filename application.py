@@ -65,7 +65,7 @@ def __generatePatch(settings: RandomizerData):
     return { 'patch': patch, 'patchName': patch_filename}
 
 def __generateSpoiler(settings: RandomizerData):
-    spoiler_filename = generate_filename(settings, "json")
+    spoiler_filename = generate_filename(settings, "txt")
     spoiler = randomizer.generate_spoiler()
 
     return { 'spoiler': spoiler, 'spoilerFilename': spoiler_filename }
