@@ -1,4 +1,4 @@
-import json, logging, sys
+import json, logging, sys, hashlib
 
 from flask import Flask, request, Response, make_response, jsonify, json
 from flask_cors import CORS
@@ -62,7 +62,7 @@ def __generatePatch(settings: RandomizerData):
     patch_filename = generate_filename(settings, "sfc")
     patch = randomizer.generate_rom(patch_filename, settings)
 
-    return { 'patch': patch, 'patchName': patch_filename}
+    return { 'patch': patch, 'patchName': patch_filename, 'checksum': hashlib.md5(patch.encode('utf-8')).hexdigest(), "version": VERSION }
 
 def __generateSpoiler(settings: RandomizerData):
     spoiler_filename = generate_filename(settings, "txt")
