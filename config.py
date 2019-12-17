@@ -1,7 +1,7 @@
 import os, argparse
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--db-connection-string", nargs="?", ction="store", dest="db_connection_string", help="The MongoDB ConnectionString")
+parser.add_argument("--db-connection-string", nargs="?", action="store", dest="db_connection_string", help="The MongoDB ConnectionString")
 parser.add_argument("--db-database-id", nargs="?", action="store", dest="db_database_id", help="The MongoDB Database ID")
 parser.add_argument("--db-collection-id", nargs="?", action="store", dest="db_collection_id", help="The MongoDB Collection ID")
 
