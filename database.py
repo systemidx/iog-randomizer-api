@@ -15,7 +15,8 @@ class Database(object):
     def __init__(self, logging: logging, config: Config):
         self.logging = logging
         self.config = config
-        self.client = MongoClient(config.DB_CONNECTIONSTRING)
+        self.client = MongoClient(config.DB_CONNECTIONSTRING, retryWrites=False)
+
         self.db = self.client[config.DB_DATABASE_ID]
         self.collection = self.db[config.DB_COLLECTION_ID]
 
