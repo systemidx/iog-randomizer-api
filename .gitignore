@@ -4,6 +4,7 @@
 **/*.sfc
 **/__pycache__
 data/iogr
+run.bat
 
 # dependencies
 /node_modules
