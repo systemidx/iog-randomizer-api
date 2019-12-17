@@ -1,4 +1,4 @@
-import json, logging, sys, hashlib
+import json, logging, sys, hashlib, uuid, datetime
 
 from flask import Flask, request, Response, make_response, jsonify, json
 from flask_cors import CORS
@@ -6,38 +6,50 @@ from flask_expects_json import expects_json, ValidationError
 
 from randomizer.iogr_rom import Randomizer, generate_filename, VERSION
 from randomizer.errors import FileNotFoundError
-from randomizer.models.randomizer_data import RandomizerData
+from randomizer.models.randomizer_data import RandomizerData as Settings
 
-from requests.generate_seed_request import GenerateSeedRequest
+from config import Config
+from database import Database
+
+from models.http.seed_request import SeedRequest
+from models.http.seed_response import SeedResponse
+from models.http.version_response import VersionResponse
+from models.patch import Patch
+from models.spoiler import Spoiler
+
+logging.basicConfig(level=logging.DEBUG)
 
 app = Flask(__name__)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
 cors = CORS(app, resources={
-    r"/v1/seed/generate": {"origins": "*"},
-    r"/v1/api/version": {"origins": "*"}
+    r"/v1/*": {"origins": "*"}
 })
-logging.basicConfig(level=logging.DEBUG)
-randomizer = Randomizer("./data/gaia.bin")
 
-@app.route("/v1/api/version", methods=["GET"])
-def getRandomizerVersion() -> Response:
-    return { "version": VERSION }
+randomizer = Randomizer("./data/gaia.bin")
+config = Config()
+database = Database(logging, config)
+
 
 @app.route("/v1/seed/generate", methods=["POST"])
-@expects_json(GenerateSeedRequest.schema)
-def generateSeed(retries: int = 0) -> Response:
+@expects_json(SeedRequest.schema)
+def generateSeed(retries: int = 0) -> Response:    
     if retries > 3:
         return make_response("Failed to generate a seed", 500)
 
     try:
-        request_params = request.get_json()
-        logging.debug(request_params)
+        request_data = SeedRequest(request.get_json())
+        settings = Settings(request_data.seed, request_data.difficulty, request_data.goal, request_data.logic, request_data.statues, request_data.enemizer, request_data.start_location, request_data.firebird, request_data.ohko, request_data.red_jewel_madness, request_data.allow_glitches, request_data.boss_shuffle, request_data.open_mode)
+        patch = __generatePatch(settings)
+        spoiler = __generateSpoiler(settings)
+        permalink_id = database.create(patch, spoiler, settings)
 
-        request_data = GenerateSeedRequest(request_params)
-        response = __generate(request_data)
+        response = SeedResponse(patch.patch, patch.patchName, patch.version, permalink_id)
+        if not request_data.generate_race_rom:
+            response.spoiler = spoiler.spoiler
+            response.spoilerName = spoiler.spoilerName        
 
-        return make_response(response, 200)
+        return make_response(response.to_json(), 200)
     except ValueError as e:
         return make_response(str(e.args), 400)
     except FileNotFoundError:
@@ -48,27 +60,32 @@ def generateSeed(retries: int = 0) -> Response:
         logging.exception("An unknown error has occurred")
         return generateSeed(retries + 1)
 
-def __generate(request: GenerateSeedRequest):
-    settings = RandomizerData(request.seed, request.difficulty, request.goal, request.logic, request.statues, request.enemizer, request.start_location, request.firebird, request.ohko, request.red_jewel_madness, request.allow_glitches, request.boss_shuffle, request.open_mode)
-    payload = {}
+@app.route("/v1/seed/permalink/<link_id>", methods=["GET"])
+def getPermalinkedSeed(link_id: str = "") -> Response:
+    try:
+        document = database.get(link_id)
+        if document == None:
+            return make_response(404)
+        
+        return make_response(document, 200)
+    except Exception as e:
+        logging.exception("An unknown error has occurred")
+        return make_response("An unknown error has occurred", 500)
 
-    payload.update(__generatePatch(settings))
-    if not request.generate_race_rom:
-        payload.update(__generateSpoiler(settings))
+@app.route("/v1/api/version", methods=["GET"])
+def getRandomizerVersion() -> Response:
+    version = VersionResponse(VERSION)
+    return make_response(version.to_json())
 
-    return json.dumps(payload)
-
-def __generatePatch(settings: RandomizerData):
+def __generatePatch(settings: Settings) -> Patch:
     patch_filename = generate_filename(settings, "sfc")
     patch = randomizer.generate_rom(patch_filename, settings)
+    return Patch(patch, patch_filename, VERSION)
 
-    return { 'patch': patch, 'patchName': patch_filename, 'checksum': hashlib.md5(patch.encode('utf-8')).hexdigest(), "version": VERSION }
-
-def __generateSpoiler(settings: RandomizerData):
+def __generateSpoiler(settings: Settings) -> Spoiler:
     spoiler_filename = generate_filename(settings, "txt")
     spoiler = randomizer.generate_spoiler()
-
-    return { 'spoiler': spoiler, 'spoilerFilename': spoiler_filename }
+    return Spoiler(spoiler, spoiler_filename)
 
 if __name__ == "__main__":
     app.run(debug=True)

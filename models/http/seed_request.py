@@ -9,7 +9,7 @@ from randomizer.models.enums.start_location import StartLocation
 from randomizer.models.enums.entrance_shuffle import EntranceShuffle
 
 
-class GenerateSeedRequest(object):
+class SeedRequest(object):
     schema = {
         'type': 'object',
         'properties': {
