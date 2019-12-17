@@ -1,9 +1,9 @@
 import os, argparse
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--db-connection-string", action="store", dest="db_connection_string", help="The MongoDB ConnectionString")
-parser.add_argument("--db-database-id", action="store", dest="db_database_id", help="The MongoDB Database ID")
-parser.add_argument("--db-collection-id", action="store", dest="db_collection_id", help="The MongoDB Collection ID")
+parser.add_argument("--db-connection-string", nargs="?", ction="store", dest="db_connection_string", help="The MongoDB ConnectionString")
+parser.add_argument("--db-database-id", nargs="?", action="store", dest="db_database_id", help="The MongoDB Database ID")
+parser.add_argument("--db-collection-id", nargs="?", action="store", dest="db_collection_id", help="The MongoDB Collection ID")
 
 class Config(object):
     def __init__(self):
