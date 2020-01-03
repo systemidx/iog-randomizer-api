@@ -15,14 +15,19 @@ class Database(object):
     def __init__(self, logging: logging, config: Config):
         self.logging = logging
         self.config = config
-        self.client = MongoClient(config.DB_CONNECTIONSTRING, retryWrites=False)
+        self.enabled = config.DB_ENABLED
 
+        if not self.enabled:
+            return
+
+        self.client = MongoClient(config.DB_CONNECTIONSTRING, retryWrites=False)
         self.db = self.client[config.DB_DATABASE_ID]
         self.collection = self.db[config.DB_COLLECTION_ID]
 
-        pass
-
     def create(self, patch: Patch, spoiler: Spoiler, settings: Settings) -> str:
+        if not self.enabled:
+            raise EnvironmentError("Database not enabled")
+
         document = Document(patch.checksum, patch.version, patch.patch, patch.patchName, spoiler.spoiler, spoiler.spoilerName, settings).to_document()
         key = document["_id"]
 
@@ -38,12 +43,18 @@ class Database(object):
         return key
 
     def get(self, id: str) -> Document:
+        if not self.enabled:
+            raise EnvironmentError("Database not enabled")
+
         f = OrderedDict([{ "_id", id }])
         document = self.collection.find_one(f)
         
         return document
 
     def exists(self, id: str) -> bool:
+        if not self.enabled:
+            raise EnvironmentError("Database not enabled")
+        
         f = OrderedDict([{ "_id", id }])
         count: int = self.collection.count_documents(f)
         return count > 0

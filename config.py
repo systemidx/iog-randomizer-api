@@ -2,6 +2,9 @@ import os
 
 class Config(object):
     def __init__(self):
+        self.DB_ENABLED = os.environ.get("DB_ENABLED") == 'TRUE'
+        if not self.DB_ENABLED:
+            return
 
         self.DB_CONNECTIONSTRING = os.environ.get("DB_CONNECTIONSTRING")
         if not self.DB_CONNECTIONSTRING:
