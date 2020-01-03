@@ -30,20 +30,23 @@ randomizer = Randomizer("./data/gaia.bin")
 config = Config()
 database = Database(logging, config)
 
-
 @app.route("/v1/seed/generate", methods=["POST"])
 @expects_json(SeedRequest.schema)
 def generateSeed(retries: int = 0) -> Response:    
     if retries > 3:
         return make_response("Failed to generate a seed", 500)
 
-    try:
+    try:        
         request_data = SeedRequest(request.get_json())
         settings = Settings(request_data.seed, request_data.difficulty, request_data.goal, request_data.logic, request_data.statues, request_data.enemizer, request_data.start_location, request_data.firebird, request_data.ohko, request_data.red_jewel_madness, request_data.allow_glitches, request_data.boss_shuffle, request_data.open_mode)
         patch = __generatePatch(settings)
         spoiler = __generateSpoiler(settings)
-        permalink_id = database.create(patch, spoiler, settings)
 
+        if database.enabled:
+            permalink_id = database.create(patch, spoiler, settings)
+        else:
+            permalink_id = None
+            
         response = SeedResponse(patch.patch, patch.patchName, patch.version, permalink_id)
         if not request_data.generate_race_rom:
             response.spoiler = spoiler.spoiler

@@ -16,7 +16,7 @@ class Document(object):
         self.patchName = patchName
         self.spoiler = spoiler
         self.spoilerName = spoilerName         
-        self.settings = settings.to_dict()
+        self.settings = settings.__dict__
 
     def to_document(self):
         parameters = self.__dict__

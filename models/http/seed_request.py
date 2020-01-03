@@ -1,4 +1,5 @@
-import json, random
+import json
+import random
 import numbers
 
 from randomizer.models.enums.difficulty import Difficulty
@@ -76,7 +77,7 @@ class SeedRequest(object):
         goal = payload.get("goal")
         self.goal = Goal(goal)
 
-        if self.goal == Goal.DARK_GAIA:
+        if self.goal != Goal.RED_JEWEL_HUNT:
             self._validateStatues(payload)
 
     def _validateStatues(self, payload):
