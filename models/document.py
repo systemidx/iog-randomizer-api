@@ -9,7 +9,7 @@ class EnumHandler(jsonpickle.handlers.BaseHandler):
 
 class Document(object):
     def __init__(self, checksum: str, version: str, patch: str, patchName: str, spoiler: str, spoilerName: str, settings: Settings):
-        self._id = hashlib.sha1(uuid.uuid4().bytes).hexdigest()[:8]
+        self.id = hashlib.sha1(uuid.uuid4().bytes).hexdigest()[:8]
         self.checksum = checksum
         self.version = version
         self.patch = patch
