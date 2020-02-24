@@ -84,7 +84,7 @@ class SeedRequest(object):
             self._validateStatues(payload)
 
     def _validateSprite(self, payload):
-        sprite = payload.get("sprite")
+        sprite = payload.get("sprite").lower()
         self.sprite = Sprite(sprite)
 
     def _validateStatues(self, payload):
