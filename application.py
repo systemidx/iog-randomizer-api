@@ -42,7 +42,11 @@ def generateSeed(retries: int = 0) -> Response:
         request_data = SeedRequest(request.get_json())
         settings = Settings(request_data.seed, request_data.difficulty, request_data.goal, request_data.logic, request_data.statues, request_data.enemizer, request_data.start_location, request_data.firebird, request_data.ohko, request_data.red_jewel_madness, request_data.allow_glitches, request_data.boss_shuffle, request_data.open_mode, request_data.sprite)
         patch = __generatePatch(settings)
-        spoiler = __generateSpoiler(settings)
+
+        if not request_data.generate_race_rom:            
+            spoiler = __generateSpoiler(settings)
+        else:
+            spoiler = None
 
         if database.enabled:
             permalink_id = database.create(patch, spoiler, settings)

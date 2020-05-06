@@ -28,7 +28,11 @@ class Database(object):
         if not self.enabled:
             raise EnvironmentError("Database not enabled")
 
-        entry = Entry(settings.seed, patch.version, patch.patch, patch.patchName, spoiler.spoiler, spoiler.spoilerName, settings)
+        if not spoiler is None:            
+            entry = Entry(settings.seed, patch.version, patch.patch, patch.patchName, spoiler.spoiler, spoiler.spoilerName, settings)
+        else:
+            entry = Entry(settings.seed, patch.version, patch.patch, patch.patchName, None, None, settings)
+
         key = self.collection.insert_one(entry.__dict__)
         return str(key.inserted_id)
 
