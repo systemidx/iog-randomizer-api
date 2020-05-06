@@ -11,6 +11,7 @@ from randomizer.models.randomizer_data import RandomizerData as Settings
 from config import Config
 from database import Database
 
+from encoder import JSONEncoder
 from models.http.seed_request import SeedRequest
 from models.http.seed_response import SeedResponse
 from models.http.version_response import VersionResponse
@@ -21,6 +22,7 @@ logging.basicConfig(level=logging.DEBUG)
 
 app = Flask(__name__)
 app.config['CORS_HEADERS'] = 'Content-Type'
+app.json_encoder = JSONEncoder
 
 cors = CORS(app, resources={
     r"/v1/*": {"origins": "*"}
@@ -68,7 +70,7 @@ def getPermalinkedSeed(link_id: str = "") -> Response:
     try:
         document = database.get(link_id)
         if document == None:
-            return make_response(404)
+            return make_response("Permalink Not Found", 404)
 
         return make_response(document, 200)
     except Exception as e:

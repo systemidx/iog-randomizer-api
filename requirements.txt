@@ -4,4 +4,3 @@ flask-expects-json==1.4.0
 iog-randomizer==3.0.3
 jsonpickle==1.2
 pymongo==3.10.0
-azure-storage-blob==12.1.0
