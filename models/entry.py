@@ -9,15 +9,15 @@ class EnumHandler(jsonpickle.handlers.BaseHandler):
     def flatten(self, obj, data):
         return obj.value
 
-class Document(object):
-    def __init__(self, seed: int, version: str, patch: str, patchName: str, spoiler: str, spoilerName: str, settings: str):
+class Entry(object):
+    def __init__(self, seed: int, version: str, patch: str, patchName: str, spoiler: str, spoilerName: str, settings: Settings):
         self.seed = seed
         self.version = version
         self.patch = patch
         self.patchName = patchName
         self.spoiler = spoiler
-        self.spoilerName = spoilerName         
-        self.settings = settings
+        self.spoilerName = spoilerName
+        self.settings = jsonpickle.encode(settings.__dict__)
         self.created_at = datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ')
 
     def to_dict(self):

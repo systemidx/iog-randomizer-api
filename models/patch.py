@@ -10,4 +10,9 @@ class Patch(object):
         self.patch = patch
         self.patchName = patchName
         self.version = version
-        self.checksum =  hashlib.md5(patch.encode('utf-8')).hexdigest()
+        self.checksum =  self.__generateChecksum__(patch, version)
+
+    def __generateChecksum__(self, patch: str, version: str):
+        encodedPatch = patch.encode('utf-8')
+        encodedVersion = version.encode('utf-8')
+        return hashlib.md5(encodedPatch + encodedVersion).hexdigest()
