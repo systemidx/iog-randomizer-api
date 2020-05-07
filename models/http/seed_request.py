@@ -84,8 +84,11 @@ class SeedRequest(object):
             self._validateStatues(payload)
 
     def _validateSprite(self, payload):
-        sprite = payload.get("sprite").lower()
-        self.sprite = Sprite(sprite)
+        sprite = payload.get("sprite")
+        if sprite is None:
+            return
+        
+        self.sprite = Sprite(sprite.lower())
 
     def _validateStatues(self, payload):
         statues = payload.get("statues")
