@@ -8,7 +8,6 @@ from randomizer.models.enums.logic import Logic
 from randomizer.models.enums.enemizer import Enemizer
 from randomizer.models.enums.start_location import StartLocation
 from randomizer.models.enums.entrance_shuffle import EntranceShuffle
-from randomizer.models.enums.sprites import Sprite
 
 class SeedRequest(object):
     schema = {
@@ -29,8 +28,7 @@ class SeedRequest(object):
             'openMode': {'type': 'boolean'},
             'dungeonShuffle': {'type': 'boolean'},
             'overworldShuffle': {'type': 'boolean'},
-            'generateRaceRom': {'type': 'boolean'},
-            'sprite': {'type': 'string'}
+            'generateRaceRom': {'type': 'boolean'}
         },
         'required': []
     }
@@ -52,7 +50,6 @@ class SeedRequest(object):
     dungeon_shuffle = False
     overworld_shuffle = False
     generate_race_rom = False
-    sprite = Sprite.WILL
 
     def __init__(self, payload):
         self._validateSeed(payload)
@@ -63,7 +60,6 @@ class SeedRequest(object):
         self._validateStartLocation(payload)
         self._validateEntranceShuffle(payload)
         self._validateSwitches(payload)
-        self._validateSprite(payload)
 
     # region Validation Methods
     def _validateSeed(self, payload):
@@ -82,13 +78,6 @@ class SeedRequest(object):
 
         if self.goal != Goal.RED_JEWEL_HUNT:
             self._validateStatues(payload)
-
-    def _validateSprite(self, payload):
-        sprite = payload.get("sprite")
-        if sprite is None:
-            return
-        
-        self.sprite = Sprite(sprite.lower())
 
     def _validateStatues(self, payload):
         statues = payload.get("statues")
