@@ -6,9 +6,25 @@ class Config(object):
         if not self.DB_ENABLED:
             return
 
-        self.DB_CONNECTIONSTRING = os.environ.get("DB_CONNECTIONSTRING")
-        if not self.DB_CONNECTIONSTRING:
-            raise ValueError("No DB_CONNECTIONSTRING set in CLI arguments or OS Environment")
+        self.DB_USERNAME = os.environ.get("DB_USERNAME")
+        if not self.DB_USERNAME:
+            raise ValueError("No DB_USERNAME set in CLI arguments or OS Environment")
+
+        self.DB_PASSWORD = os.environ.get("DB_PASSWORD")
+        if not self.DB_PASSWORD:
+            raise ValueError("No DB_PASSWORD set in CLI arguments or OS Environment")
+
+        self.DB_AUTHDB = os.environ.get("DB_AUTHDB")
+        if not self.DB_AUTHDB:
+            raise ValueError("No DB_AUTHDB set in CLI arguments or OS Environment")
+
+        self.DB_HOST = os.environ.get("DB_HOST")
+        if not self.DB_HOST:
+            raise ValueError("No DB_HOST set in CLI arguments or OS Environment")
+
+        self.DB_PORT = os.environ.get("DB_PORT")
+        if not self.DB_PORT:
+            raise ValueError("No DB_PORT set in CLI arguments or OS Environment")
 
         self.DB_DATABASE_ID = os.environ.get("DB_DATABASE_ID")
         if not self.DB_DATABASE_ID:
