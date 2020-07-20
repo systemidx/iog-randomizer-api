@@ -40,10 +40,13 @@ def generateSeed(retries: int = 0) -> Response:
 
     try:
         request_data = SeedRequest(request.get_json())
-        settings = Settings(request_data.seed, request_data.difficulty, request_data.goal, request_data.logic, request_data.statues, request_data.enemizer, request_data.start_location, request_data.firebird, request_data.ohko, request_data.red_jewel_madness, request_data.allow_glitches, request_data.boss_shuffle, request_data.open_mode)
+        settings = Settings(request_data.seed, request_data.difficulty, request_data.goal, request_data.logic,
+                            request_data.statues, request_data.enemizer, request_data.start_location, request_data.firebird,
+                            request_data.ohko, request_data.red_jewel_madness, request_data.allow_glitches,
+                            request_data.boss_shuffle, request_data.open_mode, request_data.z3_mode)
         patch = __generatePatch(settings)
 
-        if not request_data.generate_race_rom:            
+        if not request_data.generate_race_rom:
             spoiler = __generateSpoiler(settings)
         else:
             spoiler = None
