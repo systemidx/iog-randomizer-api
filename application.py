@@ -44,6 +44,9 @@ def generateSeed(retries: int = 0) -> Response:
                             request_data.statues, request_data.enemizer, request_data.start_location, request_data.firebird,
                             request_data.ohko, request_data.red_jewel_madness, request_data.allow_glitches,
                             request_data.boss_shuffle, request_data.open_mode, request_data.z3_mode)
+
+        logging.info("Generating patch with settings:\n" + str(request.get_json()))
+
         patch = __generatePatch(settings)
 
         if not request_data.generate_race_rom:
@@ -81,7 +84,7 @@ def getPermalinkedSeed(link_id: str = "") -> Response:
 
         return make_response(document, 200)
     except Exception as e:
-        logging.exception("An unknown error has occurred")
+        logging.exception("An unknown error has occurred", e)
         return make_response("An unknown error has occurred", 500)
 
 @app.route("/v1/api/version", methods=["GET"])
