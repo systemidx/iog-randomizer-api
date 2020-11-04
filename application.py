@@ -37,13 +37,13 @@ database = Database(logging, config)
 @expects_json(SeedRequest.schema)
 def generateSeed() -> Response:
     request_data = SeedRequest(request.get_json())
-    settings = Settings(request_data.seed, request_data.generate_race_rom, request_data.difficulty, request_data.goal,
+    settings = Settings(request_data.seed, request_data.difficulty, request_data.goal,
                         request_data.logic,
                         request_data.statues, request_data.enemizer, request_data.start_location, request_data.firebird,
                         request_data.ohko, request_data.red_jewel_madness, request_data.allow_glitches,
                         request_data.boss_shuffle, request_data.open_mode, request_data.z3_mode)
 
-    result = __generate(settings, 0)
+    result = __generate(settings, request_data.generate_race_rom, 0)
     if result is None:
         return make_response("Failed to generate a seed", 500)
 
@@ -84,7 +84,7 @@ def getRandomizerVersion() -> Response:
     return make_response(version.to_json())
 
 
-def __generate(settings: Settings, retries: int = 0) -> Result:
+def __generate(settings: Settings, race: bool = False, retries: int = 0) -> Result:
     if retries >= 3:
         return None
 
@@ -100,11 +100,11 @@ def __generate(settings: Settings, retries: int = 0) -> Result:
         patch = __generatePatch(settings)
         if patch is None:
             logging.info(f"({settings.seed}) Failed to generate patch in {time.perf_counter() - patch_start_time} seconds!")
-            return __generate(settings, retries + 1)
+            return __generate(settings, race, retries + 1)
         else:
             logging.info(f"({settings.seed}) Generated patch in {time.perf_counter() - patch_start_time} seconds!")
 
-        if not settings.race_mode:
+        if not race:
             logging.info(f"({settings.seed}) Race Mode off, generating spoiler...")
             spoiler_start_time = time.perf_counter()
             spoiler = __generateSpoiler(settings)
@@ -123,7 +123,7 @@ def __generate(settings: Settings, retries: int = 0) -> Result:
 
     except Exception as e:
         logging.exception(e)
-        return __generate(settings, retries + 1)
+        return __generate(settings, race, retries + 1)
 
 
 def __generatePatch(settings: Settings) -> Patch:
