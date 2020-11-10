@@ -28,8 +28,8 @@ class SeedRequest(object):
             'bossShuffle': {'type': 'boolean'},
             'openMode': {'type': 'boolean'},
             'z3Mode': {'type': 'boolean'},
-            'dungeonShuffle': {'type': 'boolean'},
             'overworldShuffle': {'type': 'boolean'},
+            'dungeonShuffle': {'type': 'boolean'},
             'generateRaceRom': {'type': 'boolean'}
         },
         'required': []
