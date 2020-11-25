@@ -29,6 +29,7 @@ class SeedRequest(object):
             'openMode': {'type': 'boolean'},
             'z3Mode': {'type': 'boolean'},
             'overworldShuffle': {'type': 'boolean'},
+            'entranceShuffle': {'type':'number'},
             'dungeonShuffle': {'type': 'boolean'},
             'generateRaceRom': {'type': 'boolean'}
         },
@@ -55,6 +56,7 @@ class SeedRequest(object):
     generate_race_rom = False
 
     def __init__(self, payload):
+        print(payload)
         self._validateSeed(payload)
         self._validateDifficulty(payload)
         self._validateGoal(payload)

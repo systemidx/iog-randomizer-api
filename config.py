@@ -2,12 +2,13 @@ import os
 from decouple import config
 from distutils.util import strtobool
 
+
 class Config(object):
     def __init__(self):
-        self.DEBUG = strtobool(config("DEBUG", default=False))
-        self.DB_ENABLED = strtobool(config("DB_ENABLED", default=False))
+        self.DEBUG = strtobool(config("DEBUG", default='False'))
+        self.DB_ENABLED = strtobool(config("DB_ENABLED", default='False'))
 
-        if self.DB_ENABLED == False:
+        if not self.DB_ENABLED:
             return
 
         self.DB_USERNAME = config("DB_USERNAME")
