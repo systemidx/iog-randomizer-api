@@ -1,35 +1,40 @@
 import os
+from decouple import config
+from distutils.util import strtobool
+
 
 class Config(object):
     def __init__(self):
-        self.DB_ENABLED = os.environ.get("DB_ENABLED") == 'TRUE'
+        self.DEBUG = strtobool(config("DEBUG", default='False'))
+        self.DB_ENABLED = strtobool(config("DB_ENABLED", default='False'))
+
         if not self.DB_ENABLED:
             return
 
-        self.DB_USERNAME = os.environ.get("DB_USERNAME")
+        self.DB_USERNAME = config("DB_USERNAME")
         if not self.DB_USERNAME:
             raise ValueError("No DB_USERNAME set in CLI arguments or OS Environment")
 
-        self.DB_PASSWORD = os.environ.get("DB_PASSWORD")
+        self.DB_PASSWORD = config("DB_PASSWORD")
         if not self.DB_PASSWORD:
             raise ValueError("No DB_PASSWORD set in CLI arguments or OS Environment")
 
-        self.DB_AUTHDB = os.environ.get("DB_AUTHDB")
+        self.DB_AUTHDB = config("DB_AUTHDB")
         if not self.DB_AUTHDB:
             raise ValueError("No DB_AUTHDB set in CLI arguments or OS Environment")
 
-        self.DB_HOST = os.environ.get("DB_HOST")
+        self.DB_HOST = config("DB_HOST")
         if not self.DB_HOST:
             raise ValueError("No DB_HOST set in CLI arguments or OS Environment")
 
-        self.DB_PORT = os.environ.get("DB_PORT")
+        self.DB_PORT = config("DB_PORT")
         if not self.DB_PORT:
             raise ValueError("No DB_PORT set in CLI arguments or OS Environment")
 
-        self.DB_DATABASE_ID = os.environ.get("DB_DATABASE_ID")
+        self.DB_DATABASE_ID = config("DB_DATABASE_ID")
         if not self.DB_DATABASE_ID:
             raise ValueError("No DB_DATABASE_ID set in CLI arguments or OS Environment")
 
-        self.DB_COLLECTION_ID = os.environ.get("DB_COLLECTION_ID")
+        self.DB_COLLECTION_ID = config("DB_COLLECTION_ID")
         if not self.DB_COLLECTION_ID:
             raise ValueError("No DB_COLLECTION_ID set in CLI arguments or OS Environment")            

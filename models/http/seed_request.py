@@ -9,6 +9,7 @@ from randomizer.models.enums.enemizer import Enemizer
 from randomizer.models.enums.start_location import StartLocation
 from randomizer.models.enums.entrance_shuffle import EntranceShuffle
 
+
 class SeedRequest(object):
     schema = {
         'type': 'object',
@@ -27,8 +28,9 @@ class SeedRequest(object):
             'bossShuffle': {'type': 'boolean'},
             'openMode': {'type': 'boolean'},
             'z3Mode': {'type': 'boolean'},
-            'dungeonShuffle': {'type': 'boolean'},
             'overworldShuffle': {'type': 'boolean'},
+            'entranceShuffle': {'type':'number'},
+            'dungeonShuffle': {'type': 'boolean'},
             'generateRaceRom': {'type': 'boolean'}
         },
         'required': []
@@ -54,6 +56,7 @@ class SeedRequest(object):
     generate_race_rom = False
 
     def __init__(self, payload):
+        print(payload)
         self._validateSeed(payload)
         self._validateDifficulty(payload)
         self._validateGoal(payload)
