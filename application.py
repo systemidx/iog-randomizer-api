@@ -28,7 +28,6 @@ cors = CORS(app, resources={
     r"/v1/*": {"origins": "*"}
 })
 
-randomizer = Randomizer("./data/gaia.bin")
 config = Config()
 database = Database(logging, config)
 
@@ -47,10 +46,11 @@ def generateSeed(retries: int = 0) -> Response:
 
         logging.info("Generating patch with settings:\n" + str(request.get_json()))
 
-        patch = __generatePatch(settings)
+        randomizer = Randomizer("./data/gaia.bin")
+        patch = __generatePatch(randomizer, settings)
 
         if not request_data.generate_race_rom:
-            spoiler = __generateSpoiler(settings)
+            spoiler = __generateSpoiler(randomizer, settings)
         else:
             spoiler = None
 
@@ -92,12 +92,12 @@ def getRandomizerVersion() -> Response:
     version = VersionResponse(VERSION)
     return make_response(version.to_json())
 
-def __generatePatch(settings: Settings) -> Patch:
+def __generatePatch(randomizer: Randomizer, settings: Settings) -> Patch:
     patch_filename = generate_filename(settings, "sfc")
     patch = randomizer.generate_rom(patch_filename, settings)
     return Patch(patch, patch_filename, VERSION)
 
-def __generateSpoiler(settings: Settings) -> Spoiler:
+def __generateSpoiler(randomizer: Randomizer, settings: Settings) -> Spoiler:
     spoiler_filename = generate_filename(settings, "txt")
     spoiler = randomizer.generate_spoiler()
     return Spoiler(spoiler, spoiler_filename)
