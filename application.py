@@ -67,11 +67,15 @@ def generateSeed() -> Response:
 @app.route("/v1/seed/permalink/<link_id>", methods=["GET"])
 def getPermalinkedSeed(link_id: str = "") -> Response:
     try:
+        if link_id == "":
+            return make_response("Did not send permalink ID", 401)
+
+        logging.info("Attempting to get permalink: " + link_id)
         document = database.get(link_id)
         if document is None:
             return make_response("Permalink Not Found", 404)
 
-        return make_response(document.to_json(), 200)
+        return make_response(document, 200)
     except Exception as e:
         logging.exception(e)
         return make_response("An unknown error has occurred", 500)
@@ -138,5 +142,5 @@ def __generateSpoiler(randomizer: Randomizer, settings: Settings) -> Spoiler:
 
 
 if __name__ == "__main__":
-    app.debug = config.DEBUG    
+    app.debug = config.DEBUG
     app.run(host="0.0.0.0", port=5000)
