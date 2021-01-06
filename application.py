@@ -75,7 +75,7 @@ def getPermalinkedSeed(link_id: str = "") -> Response:
         if document is None:
             return make_response("Permalink Not Found", 404)
 
-        return make_response(document, 200)
+        return make_response(json.dumps(document, cls=JSONEncoder), 200)
     except Exception as e:
         logging.exception(e)
         return make_response("An unknown error has occurred", 500)
