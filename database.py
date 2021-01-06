@@ -18,13 +18,10 @@ class Database(object):
         self.enabled = config.DB_ENABLED
 
         if not self.enabled:
-            return
-               
-
+            return               
+        
         uri = "mongodb://{}:{}@{}:{}/{}?authSource={}".format(self.config.DB_USERNAME, self.config.DB_PASSWORD, self.config.DB_HOST, self.config.DB_PORT, self.config.DB_DATABASE_ID, self.config.DB_AUTHDB)
         self.client = pymongo.MongoClient(uri)
-
-        #self.client = pymongo.MongoClient(self.config.DB_CONNECTIONSTRING)
         self.db = self.client[self.config.DB_DATABASE_ID]
         self.collection = self.db[self.config.DB_COLLECTION_ID]
 
