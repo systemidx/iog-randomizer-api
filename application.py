@@ -18,7 +18,7 @@ from models.patch import Patch
 from models.spoiler import Spoiler
 from models.result import Result
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.DEBUG, filename="output.log")
 
 app = Flask(__name__)
 app.config['CORS_HEADERS'] = 'Content-Type'
