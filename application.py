@@ -1,4 +1,4 @@
-import logging, time
+import logging, time, json
 
 from flask import Flask, request, Response, make_response
 from flask_cors import CORS
@@ -18,7 +18,7 @@ from models.patch import Patch
 from models.spoiler import Spoiler
 from models.result import Result
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.DEBUG, filename="output.log")
 
 app = Flask(__name__)
 app.config['CORS_HEADERS'] = 'Content-Type'
@@ -67,11 +67,15 @@ def generateSeed() -> Response:
 @app.route("/v1/seed/permalink/<link_id>", methods=["GET"])
 def getPermalinkedSeed(link_id: str = "") -> Response:
     try:
+        if link_id == "":
+            return make_response("Did not send permalink ID", 401)
+
+        logging.info("Attempting to get permalink: " + link_id)
         document = database.get(link_id)
         if document is None:
             return make_response("Permalink Not Found", 404)
 
-        return make_response(document, 200)
+        return make_response(json.dumps(document, cls=JSONEncoder), 200)
     except Exception as e:
         logging.exception(e)
         return make_response("An unknown error has occurred", 500)
@@ -139,4 +143,4 @@ def __generateSpoiler(randomizer: Randomizer, settings: Settings) -> Spoiler:
 
 if __name__ == "__main__":
     app.debug = config.DEBUG
-    app.run()
+    app.run(host="0.0.0.0", port=5000)
