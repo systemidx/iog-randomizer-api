@@ -5,6 +5,7 @@ import numbers
 from randomizer.models.enums.difficulty import Difficulty
 from randomizer.models.enums.goal import Goal
 from randomizer.models.enums.logic import Logic
+from randomizer.models.enums.statue_req import StatueReq
 from randomizer.models.enums.enemizer import Enemizer
 from randomizer.models.enums.start_location import StartLocation
 from randomizer.models.enums.entrance_shuffle import EntranceShuffle
@@ -19,6 +20,7 @@ class SeedRequest(object):
             'logic': {'type': 'number'},
             'goal': {'type': 'number'},
             'statues': {'type': 'string'},
+            'statue_req': {'type': 'string'},
             'enemizer': {'type': 'number'},
             'startLocation': {'type': 'number'},
             'allowGlitches': {'type': 'boolean'},
@@ -30,6 +32,7 @@ class SeedRequest(object):
             'z3Mode': {'type': 'boolean'},
             'overworldShuffle': {'type': 'boolean'},
             'entranceShuffle': {'type':'number'},
+            'fluteless': {'type': 'boolean'},
             'dungeonShuffle': {'type': 'boolean'},
             'generateRaceRom': {'type': 'boolean'}
         },
@@ -41,6 +44,7 @@ class SeedRequest(object):
     goal = Goal.DARK_GAIA
     statues = "Random"
     logic = Logic.COMPLETABLE
+    statue_req = StatueReq.GAME_CHOICE
     enemizer = Enemizer.NONE
     start_location = StartLocation.SOUTH_CAPE
     entrance_shuffle = EntranceShuffle.NONE
@@ -53,6 +57,7 @@ class SeedRequest(object):
     z3_mode = False
     dungeon_shuffle = False
     overworld_shuffle = False
+    fluteless = False
     generate_race_rom = False
 
     def __init__(self, payload):
@@ -61,6 +66,7 @@ class SeedRequest(object):
         self._validateDifficulty(payload)
         self._validateGoal(payload)
         self._validateLogic(payload)
+        self._validateStatueReq(payload)
         self._validateEnemizer(payload)
         self._validateStartLocation(payload)
         self._validateEntranceShuffle(payload)
@@ -101,6 +107,10 @@ class SeedRequest(object):
         logic = payload.get("logic")
         self.logic = Logic(logic)
 
+    def _validateStatueReq(self, payload):
+        statue_req = payload.get("statue_req")
+        self.logic = StatueReq(statue_req)
+
     def _validateEnemizer(self, payload):
         enemizer = payload.get("enemizer")
         self.enemizer = Enemizer(enemizer)
@@ -128,6 +138,7 @@ class SeedRequest(object):
         self.z3_mode = getSwitch(payload.get("z3Mode"))
         self.dungeon_shuffle = getSwitch(payload.get("dungeonShuffle"))
         self.overworld_shuffle = getSwitch(payload.get("overworldShuffle"))
+        self.fluteless = getSwitch(payload.get("fluteless"))
         self.generate_race_rom = getSwitch(payload.get("generateRaceRom"))
 
         if self.red_jewel_madness and self.ohko:
