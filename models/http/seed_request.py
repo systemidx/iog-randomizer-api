@@ -31,7 +31,7 @@ class SeedRequest(object):
             'openMode': {'type': 'boolean'},
             'z3Mode': {'type': 'boolean'},
             'overworldShuffle': {'type': 'boolean'},
-            'entranceShuffle': {'type':'number'},
+            'entranceShuffle': {'type': 'number'},
             'generateRaceRom': {'type': 'boolean'},
             'fluteless': {'type': 'boolean'},
             'sprite': {'type': 'number'},
@@ -59,6 +59,8 @@ class SeedRequest(object):
     entrance_shuffle = EntranceShuffle.NONE
     generate_race_rom = False
     dungeon_shuffle = False
+    fluteless = False
+    sprite = 0
 
     def __init__(self, payload):
         print(payload)
@@ -93,7 +95,7 @@ class SeedRequest(object):
 
     def _validateStatueReq(self, payload):
         statueReq = payload.get("statueReq")
-        self.statueReq = StatueReq(statueReq)
+        self.statue_req = StatueReq(statueReq)
 
     def _validateStatues(self, payload):
         statues = payload.get("statues")
@@ -139,6 +141,7 @@ class SeedRequest(object):
         self.z3_mode = getSwitch(payload.get("z3Mode"))
         self.dungeon_shuffle = getSwitch(payload.get("dungeonShuffle"))
         self.overworld_shuffle = getSwitch(payload.get("overworldShuffle"))
+        self.fluteless = getSwitch(payload.get("fluteless"))
         self.generate_race_rom = getSwitch(payload.get("generateRaceRom"))
 
         if self.red_jewel_madness and self.ohko:
