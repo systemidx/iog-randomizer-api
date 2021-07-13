@@ -35,7 +35,8 @@ class SeedRequest(object):
             'generateRaceRom': {'type': 'boolean'},
             'fluteless': {'type': 'boolean'},
             'sprite': {'type': 'number'},
-            'dungeonShuffle': {'type': 'boolean'}
+            'dungeonShuffle': {'type': 'boolean'},
+            'hideSettings': {'type': 'boolean'}
         },
         'required': []
     }
@@ -61,6 +62,7 @@ class SeedRequest(object):
     dungeon_shuffle = False
     fluteless = False
     sprite = 0
+    hide_settings = False
 
     def __init__(self, payload):
         print(payload)
@@ -143,6 +145,7 @@ class SeedRequest(object):
         self.overworld_shuffle = getSwitch(payload.get("overworldShuffle"))
         self.fluteless = getSwitch(payload.get("fluteless"))
         self.generate_race_rom = getSwitch(payload.get("generateRaceRom"))
+        self.hide_settings = getSwitch(payload.get("hideSettings"))
 
         if self.red_jewel_madness and self.ohko:
             raise ValueError("Can't have OHKO and Red Jewel Madness both flagged")
