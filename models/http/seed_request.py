@@ -4,6 +4,7 @@ import numbers
 
 from randomizer.models.enums.difficulty import Difficulty
 from randomizer.models.enums.goal import Goal
+from randomizer.models.enums.statue_req import StatueReq
 from randomizer.models.enums.logic import Logic
 from randomizer.models.enums.enemizer import Enemizer
 from randomizer.models.enums.start_location import StartLocation
@@ -16,22 +17,26 @@ class SeedRequest(object):
         'properties': {
             'seed': {'type': 'number'},
             'difficulty': {'type': 'number'},
-            'logic': {'type': 'number'},
             'goal': {'type': 'number'},
+            'logic': {'type': 'number'},
             'statues': {'type': 'string'},
+            'statueReq': {'type': 'number'},
             'enemizer': {'type': 'number'},
             'startLocation': {'type': 'number'},
-            'allowGlitches': {'type': 'boolean'},
+            'firebird': {'type': 'boolean'},
             'ohko': {'type': 'boolean'},
             'redJewelMadness': {'type': 'boolean'},
-            'firebird': {'type': 'boolean'},
+            'allowGlitches': {'type': 'boolean'},
             'bossShuffle': {'type': 'boolean'},
             'openMode': {'type': 'boolean'},
             'z3Mode': {'type': 'boolean'},
             'overworldShuffle': {'type': 'boolean'},
-            'entranceShuffle': {'type':'number'},
+            'entranceShuffle': {'type': 'number'},
+            'generateRaceRom': {'type': 'boolean'},
+            'fluteless': {'type': 'boolean'},
+            'sprite': {'type': 'number'},
             'dungeonShuffle': {'type': 'boolean'},
-            'generateRaceRom': {'type': 'boolean'}
+            'hideSettings': {'type': 'boolean'}
         },
         'required': []
     }
@@ -39,27 +44,32 @@ class SeedRequest(object):
     seed = random.randrange(0, 9999999)
     difficulty = Difficulty.NORMAL
     goal = Goal.DARK_GAIA
-    statues = "Random"
     logic = Logic.COMPLETABLE
+    statues = "Random"
+    statue_req = StatueReq.GAME_CHOICE
     enemizer = Enemizer.NONE
     start_location = StartLocation.SOUTH_CAPE
-    entrance_shuffle = EntranceShuffle.NONE
-    allow_glitches = False
+    firebird = False
     ohko = False
     red_jewel_madness = False
-    firebird = False
+    allow_glitches = False
     boss_shuffle = False
     open_mode = False
     z3_mode = False
-    dungeon_shuffle = False
     overworld_shuffle = False
+    entrance_shuffle = EntranceShuffle.NONE
     generate_race_rom = False
+    dungeon_shuffle = False
+    fluteless = False
+    sprite = 0
+    hide_settings = False
 
     def __init__(self, payload):
         print(payload)
         self._validateSeed(payload)
         self._validateDifficulty(payload)
         self._validateGoal(payload)
+        self._validateStatueReq(payload)
         self._validateLogic(payload)
         self._validateEnemizer(payload)
         self._validateStartLocation(payload)
@@ -82,7 +92,12 @@ class SeedRequest(object):
         self.goal = Goal(goal)
 
         if self.goal != Goal.RED_JEWEL_HUNT:
+            self._validateStatueReq(payload)
             self._validateStatues(payload)
+
+    def _validateStatueReq(self, payload):
+        statueReq = payload.get("statueReq")
+        self.statue_req = StatueReq(statueReq)
 
     def _validateStatues(self, payload):
         statues = payload.get("statues")
@@ -128,7 +143,9 @@ class SeedRequest(object):
         self.z3_mode = getSwitch(payload.get("z3Mode"))
         self.dungeon_shuffle = getSwitch(payload.get("dungeonShuffle"))
         self.overworld_shuffle = getSwitch(payload.get("overworldShuffle"))
+        self.fluteless = getSwitch(payload.get("fluteless"))
         self.generate_race_rom = getSwitch(payload.get("generateRaceRom"))
+        self.hide_settings = getSwitch(payload.get("hideSettings"))
 
         if self.red_jewel_madness and self.ohko:
             raise ValueError("Can't have OHKO and Red Jewel Madness both flagged")

@@ -25,14 +25,23 @@ class Database(object):
         self.db = self.client[self.config.DB_DATABASE_ID]
         self.collection = self.db[self.config.DB_COLLECTION_ID]
 
-    def create(self, patch: Patch, spoiler: Spoiler, settings: Settings) -> str:
+    def create(self, patch: Patch, spoiler: Spoiler, settings: Settings, hide_settings: bool = False) -> str:
         if not self.enabled:
             raise EnvironmentError("Database not enabled")
 
-        if not spoiler is None:            
-            entry = Entry(settings.seed, patch.version, patch.patch, patch.patchName, spoiler.spoiler, spoiler.spoilerName, settings)
-        else:
-            entry = Entry(settings.seed, patch.version, patch.patch, patch.patchName, None, None, settings)
+        _settings = None
+        if not hide_settings:
+            _settings = jsonpickle.encode(settings.__dict__)
+
+        _fluteless = settings.fluteless
+
+        _spoiler = None
+        _spoiler_name = None
+        if spoiler is not None:
+            _spoiler = spoiler.spoiler
+            _spoiler_name = spoiler.spoilerName
+
+        entry = Entry(settings.seed, patch.version, patch.patch, patch.patchName, _spoiler, _spoiler_name, _settings, _fluteless)
 
         key = self.collection.insert_one(entry.__dict__)
         return str(key.inserted_id)
