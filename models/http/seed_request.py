@@ -2,13 +2,7 @@ import json
 import random
 import numbers
 
-from randomizer.models.enums.difficulty import Difficulty
-from randomizer.models.enums.goal import Goal
-from randomizer.models.enums.statue_req import StatueReq
-from randomizer.models.enums.logic import Logic
-from randomizer.models.enums.enemizer import Enemizer
-from randomizer.models.enums.start_location import StartLocation
-from randomizer.models.enums.entrance_shuffle import EntranceShuffle
+from randomizer.models.enums import Difficulty, Goal, StatueReq, Logic, Enemizer, StartLocation, EntranceShuffle
 
 
 class SeedRequest(object):
