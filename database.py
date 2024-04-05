@@ -7,6 +7,7 @@ import pymongo
 from bson.objectid import ObjectId
 from config import Config
 from randomizer.models.randomizer_data import RandomizerData as Settings
+from randomizer.models.enums import FluteOpt
 from models.patch import Patch
 from models.spoiler import Spoiler
 from models.entry import Entry
@@ -33,7 +34,7 @@ class Database(object):
         if not hide_settings:
             _settings = jsonpickle.encode(settings.__dict__)
 
-        _fluteless = settings.fluteless
+        _fluteless = True if settings.flute == FluteOpt.FLUTELESS else False
 
         _spoiler = None
         _spoiler_name = None
