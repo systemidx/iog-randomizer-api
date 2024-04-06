@@ -60,6 +60,7 @@ def generateSeed() -> Response:
                         orb_rando=request_data.orb_rando,
                         darkrooms=request_data.darkrooms,
                         dungeon_shuffle=request_data.dungeon_shuffle,
+                        infinite_inventory=request_data.infinite_inventory
                         )
 
     randomizer = Randomizer("./data/gaia.bin")
