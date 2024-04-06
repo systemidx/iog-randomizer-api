@@ -35,7 +35,7 @@ class SeedRequest(object):
             'orbRando': {'type': 'boolean'},
             'darkRooms': {'type': 'number'},
             'cursedRooms': {'type': 'boolean'},
-            'infiniteInvetory': {'type': 'boolean'},
+            'infiniteInventory': {'type': 'boolean'},
         },
         'required': []
     }
