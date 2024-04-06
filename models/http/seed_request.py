@@ -2,7 +2,7 @@ import json
 import random
 import numbers
 
-from randomizer.models.enums import Difficulty, Goal, StatueReq, Logic, Enemizer, StartLocation, EntranceShuffle
+from randomizer.models.enums import Difficulty, Goal, StatueReq, Logic, Enemizer, StartLocation, FluteOpt, DarkRooms
 
 
 class SeedRequest(object):
@@ -25,12 +25,17 @@ class SeedRequest(object):
             'openMode': {'type': 'boolean'},
             'z3Mode': {'type': 'boolean'},
             'overworldShuffle': {'type': 'boolean'},
-            'entranceShuffle': {'type': 'number'},
             'generateRaceRom': {'type': 'boolean'},
-            'fluteless': {'type': 'boolean'},
+            'flute': {'type': 'number'},
             'sprite': {'type': 'number'},
             'dungeonShuffle': {'type': 'boolean'},
-            'hideSettings': {'type': 'boolean'}
+            'townShuffle': {'type': 'boolean'},
+            'coupledExits': {'type': 'boolean'},
+            'hideSettings': {'type': 'boolean'},
+            'orbRando': {'type': 'boolean'},
+            'darkRooms': {'type': 'number'},
+            'cursedRooms': {'type': 'boolean'},
+            'infiniteInvetory': {'type': 'boolean'},
         },
         'required': []
     }
@@ -51,12 +56,16 @@ class SeedRequest(object):
     open_mode = False
     z3_mode = False
     overworld_shuffle = False
-    entrance_shuffle = EntranceShuffle.NONE
+    town_shuffle = False
     generate_race_rom = False
     dungeon_shuffle = False
-    fluteless = False
+    flute = FluteOpt.START
     sprite = 0
     hide_settings = False
+    coupled_exits = False
+    orb_rando = False
+    darkrooms = DarkRooms.NONE
+    infinite_inventory = False
 
     def __init__(self, payload):
         print(payload)
@@ -67,7 +76,8 @@ class SeedRequest(object):
         self._validateLogic(payload)
         self._validateEnemizer(payload)
         self._validateStartLocation(payload)
-        self._validateEntranceShuffle(payload)
+        self._validateFlute(payload)
+        self._validateDarkRooms(payload)
         self._validateSwitches(payload)
 
     # region Validation Methods
@@ -118,9 +128,18 @@ class SeedRequest(object):
         start_location = payload.get("startLocation")
         self.start_location = StartLocation(start_location)
 
-    def _validateEntranceShuffle(self, payload):
-        entrance_shuffle = payload.get("entranceShuffle")
-        self.entrance_shuffle = EntranceShuffle(entrance_shuffle)
+    def _validateFlute(self, payload):
+        flute_opt = payload.get("flute")
+        self.flute = FluteOpt(flute_opt)
+
+
+    def _validateDarkRooms(self, payload):
+        dark_rooms = payload.get("darkRooms", 0)
+        curses = payload.get("allowGlitches")
+        if curses:
+            self.darkrooms = DarkRooms(-dark_rooms)
+        else:
+            self.darkrooms = DarkRooms(dark_rooms)
 
     def _validateSwitches(self, payload):
         def getSwitch(switch):
@@ -137,9 +156,12 @@ class SeedRequest(object):
         self.z3_mode = getSwitch(payload.get("z3Mode"))
         self.dungeon_shuffle = getSwitch(payload.get("dungeonShuffle"))
         self.overworld_shuffle = getSwitch(payload.get("overworldShuffle"))
-        self.fluteless = getSwitch(payload.get("fluteless"))
+        self.town_shuffle = getSwitch(payload.get("townShuffle"))
+        self.coupled_exits = getSwitch(payload.get("coupledExits"))
+        self.orb_rando = getSwitch(payload.get("orbRando"))
         self.generate_race_rom = getSwitch(payload.get("generateRaceRom"))
         self.hide_settings = getSwitch(payload.get("hideSettings"))
+        self.infinite_inventory = getSwitch(payload.get("infiniteInventory"))
 
         if self.red_jewel_madness and self.ohko:
             raise ValueError("Can't have OHKO and Red Jewel Madness both flagged")
