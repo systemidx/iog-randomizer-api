@@ -6,7 +6,7 @@ from flask_expects_json import expects_json
 
 from randomizer.iogr_rom import Randomizer, generate_filename, VERSION
 from randomizer.models.randomizer_data import RandomizerData as Settings
-from randomizer.models.enums import EntranceShuffle, FluteOpt   # legacy
+from randomizer.models.enums import EntranceShuffle, FluteOpt  # legacy
 
 from config import Config
 from database import Database
@@ -32,23 +32,34 @@ cors = CORS(app, resources={
 config = Config()
 database = Database(logging, config)
 
+
 @app.route("/v1/seed/generate", methods=["POST"])
 @expects_json(SeedRequest.schema)
 def generateSeed() -> Response:
     request_data = SeedRequest(request.get_json())
-    settings = Settings(seed = request_data.seed, 
-                        difficulty = request_data.difficulty, goal = request_data.goal, logic = request_data.logic, 
-                        statues = request_data.statues, statue_req = request_data.statue_req,
-                        firebird = request_data.firebird, ohko = request_data.ohko, z3 = request_data.z3_mode,
-                        red_jewel_madness = request_data.red_jewel_madness, allow_glitches = request_data.allow_glitches, 
-                        open_mode = request_data.open_mode, race_mode = request_data.generate_race_rom,
-                        start_location = request_data.start_location, 
-                        enemizer = request_data.enemizer, 
-                        boss_shuffle = request_data.boss_shuffle, 
-                        overworld_shuffle = request_data.overworld_shuffle, 
-                        coupled_exits = False if request_data.entrance_shuffle == EntranceShuffle.UNCOUPLED else True,
-                        town_shuffle = False if request_data.entrance_shuffle == EntranceShuffle.NONE else True,
-                        flute = FluteOpt.FLUTELESS if request_data.fluteless else FluteOpt.START
+    settings = Settings(seed=request_data.seed,
+                        difficulty=request_data.difficulty,
+                        goal=request_data.goal,
+                        logic=request_data.logic,
+                        statues=request_data.statues,
+                        statue_req=request_data.statue_req,
+                        firebird=request_data.firebird,
+                        ohko=request_data.ohko,
+                        z3=request_data.z3_mode,
+                        red_jewel_madness=request_data.red_jewel_madness,
+                        allow_glitches=request_data.allow_glitches,
+                        open_mode=request_data.open_mode,
+                        race_mode=request_data.generate_race_rom,
+                        start_location=request_data.start_location,
+                        enemizer=request_data.enemizer,
+                        boss_shuffle=request_data.boss_shuffle,
+                        overworld_shuffle=request_data.overworld_shuffle,
+                        coupled_exits=request_data.coupled_exits,
+                        town_shuffle=request_data.town_shuffle,
+                        flute=request_data.flute,
+                        orb_rando=request_data.orb_rando,
+                        darkrooms=request_data.darkrooms,
+                        dungeon_shuffle=request_data.dungeon_shuffle,
                         )
 
     randomizer = Randomizer("./data/gaia.bin")
@@ -97,7 +108,8 @@ def getRandomizerVersion() -> Response:
     return make_response(version.to_json())
 
 
-def __generate(randomizer: Randomizer, settings: Settings, race: bool = False, retries: int = 0, hide_settings: bool = False) -> Result:
+def __generate(randomizer: Randomizer, settings: Settings, race: bool = False, retries: int = 0,
+               hide_settings: bool = False) -> Result:
     if retries >= 3:
         return None
 
@@ -112,7 +124,8 @@ def __generate(randomizer: Randomizer, settings: Settings, race: bool = False, r
 
         patch = __generatePatch(randomizer, settings, hide_settings)
         if patch is None:
-            logging.info(f"({settings.seed}) Failed to generate patch in {time.perf_counter() - patch_start_time} seconds!")
+            logging.info(
+                f"({settings.seed}) Failed to generate patch in {time.perf_counter() - patch_start_time} seconds!")
             return __generate(randomizer, settings, race, retries + 1, hide_settings)
         else:
             logging.info(f"({settings.seed}) Generated patch in {time.perf_counter() - patch_start_time} seconds!")
