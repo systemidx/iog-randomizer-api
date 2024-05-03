@@ -4,9 +4,8 @@ from flask import Flask, request, Response, make_response
 from flask_cors import CORS
 from flask_expects_json import expects_json
 
-from randomizer.iogr_rom import Randomizer, generate_filename, VERSION
-from randomizer.models.randomizer_data import RandomizerData as Settings
-from randomizer.models.enums import EntranceShuffle, FluteOpt  # legacy
+from iog_randomizer.randomizer.iogr_rom import Randomizer, generate_filename, VERSION
+from iog_randomizer.randomizer.models.randomizer_data import RandomizerData as Settings
 
 from config import Config
 from database import Database

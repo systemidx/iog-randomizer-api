@@ -1,6 +1,6 @@
-import os
-from decouple import config
 from distutils.util import strtobool
+
+from decouple import config
 
 
 class Config(object):
@@ -37,4 +37,4 @@ class Config(object):
 
         self.DB_COLLECTION_ID = config("DB_COLLECTION_ID")
         if not self.DB_COLLECTION_ID:
-            raise ValueError("No DB_COLLECTION_ID set in CLI arguments or OS Environment")            
+            raise ValueError("No DB_COLLECTION_ID set in CLI arguments or OS Environment")

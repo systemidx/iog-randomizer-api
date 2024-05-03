@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name='iog-randomizer-api',
-    version='4.0.0',
+    version='5.0.0',
     description='The Illusion of Gaia Randomizer API',
     author='bryon_w',
     packages=setuptools.find_packages(),

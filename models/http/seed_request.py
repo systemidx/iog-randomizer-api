@@ -1,8 +1,15 @@
 import json
-import random
 import numbers
+import random
 
-from randomizer.models.enums import Difficulty, Goal, StatueReq, Logic, Enemizer, StartLocation, FluteOpt, DarkRooms
+from iog_randomizer.randomizer.models.enums import DarkRooms
+from iog_randomizer.randomizer.models.enums import Difficulty
+from iog_randomizer.randomizer.models.enums import Enemizer
+from iog_randomizer.randomizer.models.enums import FluteOpt
+from iog_randomizer.randomizer.models.enums import Goal
+from iog_randomizer.randomizer.models.enums import Logic
+from iog_randomizer.randomizer.models.enums import StartLocation
+from iog_randomizer.randomizer.models.enums import StatueReq
 
 
 class SeedRequest(object):
@@ -131,7 +138,6 @@ class SeedRequest(object):
     def _validateFlute(self, payload):
         flute_opt = payload.get("flute")
         self.flute = FluteOpt(flute_opt)
-
 
     def _validateDarkRooms(self, payload):
         dark_rooms = payload.get("darkRooms", 0)
