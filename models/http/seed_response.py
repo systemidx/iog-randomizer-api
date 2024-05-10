@@ -1,4 +1,5 @@
-import hashlib, json
+import json
+
 
 class SeedResponse(object):
     permalink_id: str = ''

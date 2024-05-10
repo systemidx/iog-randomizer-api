@@ -1,5 +1,6 @@
 import json
 
+
 class VersionResponse(object):
     version: str = ''
 
