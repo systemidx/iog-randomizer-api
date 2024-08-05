@@ -43,6 +43,7 @@ class SeedRequest(object):
             'darkRooms': {'type': 'number'},
             'cursedRooms': {'type': 'boolean'},
             'infiniteInventory': {'type': 'boolean'},
+            'dsWarp': {'type': 'boolean'},
         },
         'required': []
     }
@@ -73,6 +74,7 @@ class SeedRequest(object):
     orb_rando = False
     darkrooms = DarkRooms.NONE
     infinite_inventory = False
+    ds_warp = False
 
     def __init__(self, payload):
         print(payload)
@@ -168,6 +170,7 @@ class SeedRequest(object):
         self.generate_race_rom = getSwitch(payload.get("generateRaceRom"))
         self.hide_settings = getSwitch(payload.get("hideSettings"))
         self.infinite_inventory = getSwitch(payload.get("infiniteInventory"))
+        self.ds_warp = getSwitch(payload.get("dsWarp"))
 
         if self.red_jewel_madness and self.ohko:
             raise ValueError("Can't have OHKO and Red Jewel Madness both flagged")
