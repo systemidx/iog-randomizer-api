@@ -64,7 +64,8 @@ def generateSeed() -> Response:
                         )
 
     randomizer = Randomizer("./data/gaia.bin")
-    result = __generate(randomizer, settings, request_data.generate_race_rom, 0, request_data.hide_settings)
+    result = __generate(randomizer, settings, request_data.generate_race_rom, 0, request_data.hide_settings,
+                        request_data.return_spoiler)
     if result is None:
         return make_response("Failed to generate a seed", 500)
 
@@ -110,7 +111,7 @@ def getRandomizerVersion() -> Response:
 
 
 def __generate(randomizer: Randomizer, settings: Settings, race: bool = False, retries: int = 0,
-               hide_settings: bool = False) -> Result:
+               hide_settings: bool = False, return_spoiler: bool = False) -> Result:
     if retries >= 3:
         return None
 
@@ -127,30 +128,37 @@ def __generate(randomizer: Randomizer, settings: Settings, race: bool = False, r
         if patch is None:
             logging.info(
                 f"({settings.seed}) Failed to generate patch in {time.perf_counter() - patch_start_time} seconds!")
-            return __generate(randomizer, settings, race, retries + 1, hide_settings)
+            return __generate(randomizer, settings, race, retries + 1, hide_settings, return_spoiler)
         else:
             logging.info(f"({settings.seed}) Generated patch in {time.perf_counter() - patch_start_time} seconds!")
 
-        if not race:
-            logging.info(f"({settings.seed}) Race Mode off, generating spoiler...")
+        if race and not return_spoiler:
+            logging.info(f"({settings.seed}) Not generating spoiler data")
+        else:
+            logging.info(f"({settings.seed}) Generating spoiler data...")
             spoiler_start_time = time.perf_counter()
             spoiler = __generateSpoiler(randomizer, settings, hide_settings)
             logging.info(f"({settings.seed}) Generated spoiler in {time.perf_counter() - spoiler_start_time} seconds!")
-        else:
-            logging.info(f"({settings.seed}) Race Mode on, not generating spoiler...")
+
+        _returned_spoiler = None
+        _stored_spoiler = None
+        if return_spoiler:
+            _returned_spoiler = spoiler
+        if not race:
+            _stored_spoiler = spoiler
 
         if database.enabled:
             logging.info(f"({settings.seed}) Generating permalink...")
             permalink_start_time = time.perf_counter()
-            permalink = database.create(patch, spoiler, settings, hide_settings)
+            permalink = database.create(patch, _stored_spoiler, settings, hide_settings)
             logging.info(
                 f"({settings.seed}) Permalink generated in {time.perf_counter() - permalink_start_time} seconds!")
 
-        return Result(patch, spoiler, permalink)
+        return Result(patch, _returned_spoiler, permalink)
 
     except Exception as e:
         logging.exception(e)
-        return __generate(randomizer, settings, race, retries + 1, hide_settings)
+        return __generate(randomizer, settings, race, retries + 1, hide_settings, return_spoiler)
 
 
 def __generateFileName(settings: Settings, extension: str, obfuscate_options: bool = False) -> str:
