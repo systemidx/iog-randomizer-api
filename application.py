@@ -150,7 +150,7 @@ def __generate(randomizer: Randomizer, settings: Settings, race: bool = False, r
         if database.enabled:
             logging.info(f"({settings.seed}) Generating permalink...")
             permalink_start_time = time.perf_counter()
-            permalink = database.create(patch, _stored_spoiler, settings, hide_settings)
+            permalink = database.create(patch, _stored_spoiler, settings, hide_settings, return_spoiler)
             logging.info(
                 f"({settings.seed}) Permalink generated in {time.perf_counter() - permalink_start_time} seconds!")
 

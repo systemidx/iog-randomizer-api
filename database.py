@@ -29,7 +29,12 @@ class Database(object):
         self.db = self.client[self.config.DB_DATABASE_ID]
         self.collection = self.db[self.config.DB_COLLECTION_ID]
 
-    def create(self, patch: Patch, spoiler: Spoiler, settings: Settings, hide_settings: bool = False) -> str:
+    def create(self,
+               patch: Patch,
+               spoiler: Spoiler,
+               settings: Settings,
+               hide_settings: bool = False,
+               return_spoiler: bool = False) -> str:
         if not self.enabled:
             raise EnvironmentError("Database not enabled")
 
@@ -46,7 +51,7 @@ class Database(object):
             _spoiler_name = spoiler.spoilerName
 
         entry = Entry(settings.seed, patch.version, patch.patch, patch.patchName, _spoiler, _spoiler_name, _settings,
-                      _fluteless)
+                      str(_fluteless), str(return_spoiler))
 
         key = self.collection.insert_one(entry.__dict__)
         return str(key.inserted_id)

@@ -13,7 +13,7 @@ class EnumHandler(jsonpickle.handlers.BaseHandler):
 class Entry(object):
     def __init__(
         self, seed: int, version: str, patch: str, patchName: str, spoiler: str, spoilerName: str, settings: str,
-        fluteless: str
+        fluteless: str, returned_spoiler: str
         ):
         self.seed = seed
         self.version = version
@@ -23,6 +23,7 @@ class Entry(object):
         self.spoilerName = spoilerName
         self.settings = settings
         self.fluteless = fluteless
+        self.returned_spoiler = returned_spoiler
         self.created_at = datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ')
 
     def to_dict(self):
