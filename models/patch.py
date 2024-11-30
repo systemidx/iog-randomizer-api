@@ -1,5 +1,6 @@
 import hashlib
 
+
 class Patch(object):
     patch: str = ''
     patchName: str = ''
@@ -10,7 +11,7 @@ class Patch(object):
         self.patch = patch
         self.patchName = patchName
         self.version = version
-        self.checksum =  self.__generateChecksum__(patch, version)
+        self.checksum = self.__generateChecksum__(patch, version)
 
     def __generateChecksum__(self, patch: str, version: str):
         encodedPatch = patch.encode('utf-8')

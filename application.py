@@ -4,8 +4,8 @@ from flask import Flask, request, Response, make_response
 from flask_cors import CORS
 from flask_expects_json import expects_json
 
-from randomizer.iogr_rom import Randomizer, generate_filename, VERSION
-from randomizer.models.randomizer_data import RandomizerData as Settings
+from iog_randomizer.randomizer.iogr_rom import Randomizer, generate_filename, VERSION
+from iog_randomizer.randomizer.models.randomizer_data import RandomizerData as Settings
 
 from config import Config
 from database import Database
@@ -31,20 +31,41 @@ cors = CORS(app, resources={
 config = Config()
 database = Database(logging, config)
 
+
 @app.route("/v1/seed/generate", methods=["POST"])
 @expects_json(SeedRequest.schema)
 def generateSeed() -> Response:
     request_data = SeedRequest(request.get_json())
-    settings = Settings(request_data.seed, request_data.difficulty, request_data.goal,
-                        request_data.logic, request_data.statues, request_data.statue_req,
-                        request_data.enemizer, request_data.start_location, request_data.firebird,
-                        request_data.ohko, request_data.red_jewel_madness, request_data.allow_glitches,
-                        request_data.boss_shuffle, request_data.open_mode, request_data.z3_mode,
-                        request_data.overworld_shuffle, request_data.entrance_shuffle, request_data.generate_race_rom,
-                        request_data.fluteless, request_data.sprite, request_data.dungeon_shuffle)
+    settings = Settings(seed=request_data.seed,
+                        difficulty=request_data.difficulty,
+                        goal=request_data.goal,
+                        logic=request_data.logic,
+                        statues=request_data.statues,
+                        statue_req=request_data.statue_req,
+                        firebird=request_data.firebird,
+                        ohko=request_data.ohko,
+                        z3=request_data.z3_mode,
+                        red_jewel_madness=request_data.red_jewel_madness,
+                        allow_glitches=request_data.allow_glitches,
+                        open_mode=request_data.open_mode,
+                        race_mode=request_data.generate_race_rom,
+                        start_location=request_data.start_location,
+                        enemizer=request_data.enemizer,
+                        boss_shuffle=request_data.boss_shuffle,
+                        overworld_shuffle=request_data.overworld_shuffle,
+                        coupled_exits=request_data.coupled_exits,
+                        town_shuffle=request_data.town_shuffle,
+                        flute=request_data.flute,
+                        orb_rando=request_data.orb_rando,
+                        darkrooms=request_data.darkrooms,
+                        dungeon_shuffle=request_data.dungeon_shuffle,
+                        infinite_inventory=request_data.infinite_inventory,
+                        ds_warp=request_data.ds_warp,
+                        )
 
     randomizer = Randomizer("./data/gaia.bin")
-    result = __generate(randomizer, settings, request_data.generate_race_rom, 0, request_data.hide_settings)
+    result = __generate(randomizer, settings, request_data.generate_race_rom, 0, request_data.hide_settings,
+                        request_data.return_spoiler)
     if result is None:
         return make_response("Failed to generate a seed", 500)
 
@@ -89,7 +110,8 @@ def getRandomizerVersion() -> Response:
     return make_response(version.to_json())
 
 
-def __generate(randomizer: Randomizer, settings: Settings, race: bool = False, retries: int = 0, hide_settings: bool = False) -> Result:
+def __generate(randomizer: Randomizer, settings: Settings, race: bool = False, retries: int = 0,
+               hide_settings: bool = False, return_spoiler: bool = False) -> Result:
     if retries >= 3:
         return None
 
@@ -104,31 +126,39 @@ def __generate(randomizer: Randomizer, settings: Settings, race: bool = False, r
 
         patch = __generatePatch(randomizer, settings, hide_settings)
         if patch is None:
-            logging.info(f"({settings.seed}) Failed to generate patch in {time.perf_counter() - patch_start_time} seconds!")
-            return __generate(randomizer, settings, race, retries + 1, hide_settings)
+            logging.info(
+                f"({settings.seed}) Failed to generate patch in {time.perf_counter() - patch_start_time} seconds!")
+            return __generate(randomizer, settings, race, retries + 1, hide_settings, return_spoiler)
         else:
             logging.info(f"({settings.seed}) Generated patch in {time.perf_counter() - patch_start_time} seconds!")
 
-        if not race:
-            logging.info(f"({settings.seed}) Race Mode off, generating spoiler...")
+        if race and not return_spoiler:
+            logging.info(f"({settings.seed}) Not generating spoiler data")
+        else:
+            logging.info(f"({settings.seed}) Generating spoiler data...")
             spoiler_start_time = time.perf_counter()
             spoiler = __generateSpoiler(randomizer, settings, hide_settings)
             logging.info(f"({settings.seed}) Generated spoiler in {time.perf_counter() - spoiler_start_time} seconds!")
-        else:
-            logging.info(f"({settings.seed}) Race Mode on, not generating spoiler...")
+
+        _returned_spoiler = None
+        _stored_spoiler = None
+        if return_spoiler:
+            _returned_spoiler = spoiler
+        if not race:
+            _stored_spoiler = spoiler
 
         if database.enabled:
             logging.info(f"({settings.seed}) Generating permalink...")
             permalink_start_time = time.perf_counter()
-            permalink = database.create(patch, spoiler, settings, hide_settings)
+            permalink = database.create(patch, _stored_spoiler, settings, hide_settings, return_spoiler)
             logging.info(
                 f"({settings.seed}) Permalink generated in {time.perf_counter() - permalink_start_time} seconds!")
 
-        return Result(patch, spoiler, permalink)
+        return Result(patch, _returned_spoiler, permalink)
 
     except Exception as e:
         logging.exception(e)
-        return __generate(randomizer, settings, race, retries + 1, hide_settings)
+        return __generate(randomizer, settings, race, retries + 1, hide_settings, return_spoiler)
 
 
 def __generateFileName(settings: Settings, extension: str, obfuscate_options: bool = False) -> str:
@@ -140,7 +170,7 @@ def __generateFileName(settings: Settings, extension: str, obfuscate_options: bo
 
 def __generatePatch(randomizer: Randomizer, settings: Settings, hide_settings: bool = False) -> Patch:
     patch_filename = __generateFileName(settings, "sfc", hide_settings)
-    patch = randomizer.generate_rom(patch_filename, settings)
+    patch = randomizer.generate_legacy_patch(patch_filename, settings)
     return Patch(patch, patch_filename, VERSION)
 
 

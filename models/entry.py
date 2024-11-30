@@ -1,16 +1,20 @@
-import jsonpickle, hashlib, uuid
 from datetime import datetime
-
 from enum import Enum
-from randomizer.models.randomizer_data import RandomizerData as Settings
+
+import jsonpickle
+
 
 @jsonpickle.handlers.register(Enum, base=True)
 class EnumHandler(jsonpickle.handlers.BaseHandler):
     def flatten(self, obj, data):
         return obj.value
 
+
 class Entry(object):
-    def __init__(self, seed: int, version: str, patch: str, patchName: str, spoiler: str, spoilerName: str, settings: str, fluteless: str):
+    def __init__(
+        self, seed: int, version: str, patch: str, patchName: str, spoiler: str, spoilerName: str, settings: str,
+        fluteless: str, returned_spoiler: str
+        ):
         self.seed = seed
         self.version = version
         self.patch = patch
@@ -19,6 +23,7 @@ class Entry(object):
         self.spoilerName = spoilerName
         self.settings = settings
         self.fluteless = fluteless
+        self.returned_spoiler = returned_spoiler
         self.created_at = datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ')
 
     def to_dict(self):
