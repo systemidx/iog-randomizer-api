@@ -1,5 +1,5 @@
 Flask==2.2.2
-Flask-Cors==3.0.8
+Flask-Cors==3.0.9
 flask-expects-json==1.7.0
 gunicorn==20.0.4
 iog-randomizer==5.1.5
