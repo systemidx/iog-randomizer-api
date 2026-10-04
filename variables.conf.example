@@ -1,0 +1,13 @@
+# Illusion of Gaia Randomizer API Configuration
+DEBUG=False
+DB_ENABLED=True
+
+# Database Configuration (MongoDB)
+DB_USERNAME=admin
+DB_PASSWORD=secretpassword
+DB_AUTHDB=admin
+DB_HOST=192.168.6.20
+DB_PORT=27017
+DB_DATABASE_ID=iog_randomizer
+# Set to 'dev_permalinks' on Dev (192.168.6.31) and 'prod_permalinks' on Prod (192.168.6.32)
+DB_COLLECTION_ID=prod_permalinks

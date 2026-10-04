@@ -1,0 +1,16 @@
+[Unit]
+Description=Illusion of Gaia Randomizer API Service
+After=network.target
+
+[Service]
+Type=simple
+User=iogr
+Group=iogr
+WorkingDirectory=/opt/iog-randomizer-api
+ExecStart=/opt/iog-randomizer-api/start.sh
+Restart=on-failure
+RestartSec=5s
+EnvironmentFile=-/opt/iog-randomizer-api/variables.conf
+
+[Install]
+WantedBy=multi-user.target

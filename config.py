@@ -1,6 +1,16 @@
-from distutils.util import strtobool
-
 from decouple import config
+
+
+def strtobool(val) -> bool:
+    if isinstance(val, bool):
+        return val
+    val = str(val).lower()
+    if val in ('y', 'yes', 't', 'true', 'on', '1'):
+        return True
+    elif val in ('n', 'no', 'f', 'false', 'off', '0'):
+        return False
+    raise ValueError(f"Invalid truth value: {val}")
+
 
 
 class Config(object):

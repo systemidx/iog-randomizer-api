@@ -22,7 +22,22 @@ logging.basicConfig(level=logging.DEBUG, filename="output.log")
 
 app = Flask(__name__)
 app.config['CORS_HEADERS'] = 'Content-Type'
-app.json_encoder = JSONEncoder
+
+try:
+    from flask.json.provider import DefaultJSONProvider
+    from bson import ObjectId
+
+    class CustomJSONProvider(DefaultJSONProvider):
+        def default(self, o):
+            if isinstance(o, ObjectId):
+                return str(o)
+            return super().default(o)
+
+    app.json_provider_class = CustomJSONProvider
+    app.json = CustomJSONProvider(app)
+except ImportError:
+    app.json_encoder = JSONEncoder
+
 
 cors = CORS(app, resources={
     r"/v1/*": {"origins": "*"}

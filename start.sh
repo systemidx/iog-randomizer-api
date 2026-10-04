@@ -1,7 +1,16 @@
 #!/bin/bash
 echo "Starting IOGR API"
-source variables.conf
-pip install virtualenv
-python -m virtualenv /home/bryon/app/env
-/home/bryon/app/env/bin/pip install -r /home/bryon/app/requirements.txt
-/home/bryon/app/env/bin/python /home/bryon/app/application.py
+if [ -f variables.conf ]; then
+    source variables.conf
+fi
+
+if [ ! -d "env" ] && [ -z "$VIRTUAL_ENV" ]; then
+    python3 -m venv env
+    ./env/bin/pip install -r requirements.txt
+fi
+
+if [ -f "./env/bin/python" ]; then
+    exec ./env/bin/python application.py
+else
+    exec python3 application.py
+fi

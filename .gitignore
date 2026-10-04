@@ -5,6 +5,9 @@
 **/__pycache__
 data/iogr
 run.bat
+variables.conf
+DEPLOYMENT.md
+
 
 # dependencies
 /node_modules
