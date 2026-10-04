@@ -1,6 +1,6 @@
 Flask>=3.0.0
 Flask-Cors>=4.0.0
-flask-expects-json>=1.8.0
+flask-expects-json>=1.7.0
 gunicorn>=22.0.0
 iog-randomizer==5.1.5.3
 jsonpickle>=3.0.0
